@@ -1,0 +1,4 @@
+#!/bin/sh
+
+./tools/koffset4 $1 > $2/offsets.mk
+~/datautils0/native/make_kernel_patchfile $1 old >> $2/offsets.mk
