@@ -61,6 +61,9 @@ compatibility_t compatible_devices[] = {
     {"N88AP", "9B176"},
     {"K48AP", "9B176"},
 
+    {"K93AP", "9B176"},
+    {"K93AP", "9B206"},
+
     {"N92AP", "9B206"},
     {"N90AP", "9B206"},
     {"N88AP", "9B206"},
@@ -1154,7 +1157,7 @@ int jailbreak_device(const char *uuid)
                  0100644, 0, 0, 4) != 0) {
                 ERROR("Could not add unthread.png");
             }
-        } else if (!strcmp(product, "K48AP")) {
+        } else if (!strcmp(product, "K48AP") || !strcmp(product, "K93AP")) {
             if (backup_add_file_from_path
                 (backup, "MediaDomain",
                  "payload/Unthread.app/unthread-ipad.png",
