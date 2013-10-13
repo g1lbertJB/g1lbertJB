@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(unthreadedjb, 1.0)
+AC_INIT(pris0nbarake, 1.0)
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CANONICAL_SYSTEM
@@ -24,8 +24,6 @@ OPENSSL_STATIC=""
 PKG_CHECK_MODULES(libimobiledevice, libimobiledevice-1.0 >= 1.1.0)
 PKG_CHECK_MODULES(libplist, libplist >= 0.15)
 PKG_CHECK_MODULES(libzip, libzip >= 0.8)
-PKG_CHECK_MODULES(libcurl, libcurl >= 7.0)
-PKG_CHECK_MODULES(zlib, zlib >= 1.2)
 
 
 GLOBAL_CFLAGS=$ACCFLAGS
