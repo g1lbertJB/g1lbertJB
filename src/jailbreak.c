@@ -1200,6 +1200,11 @@ int jailbreak_device(const char *uuid)
                  "/private/var/unthreadedjb/launchd.conf", 0, 0, 4) != 0) {
                 ERROR("Failed to symlink launchd.conf!\n");
             }
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/dirhelper",
+                                          "Media/Recordings/.haxx/usr/libexec/dirhelper",
+                                          0100755, 0, 0, 4) != 0) {
+                ERROR("Could not add dirhelper");
+            }
             if (backup_add_file_from_path(backup, "MediaDomain", jb_path,
                                           "Media/Recordings/.haxx/var/unthreadedjb/jb",
                                           0100755, 0, 0, 4) != 0) {
