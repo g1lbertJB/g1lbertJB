@@ -64,6 +64,8 @@ compatibility_t compatible_devices[] = {
     {"K93AP", "9B176"},
     {"K93AP", "9B206"},
 
+    {"N94AP", "9B206"},
+
     {"N92AP", "9B206"},
     {"N90AP", "9B206"},
     {"N88AP", "9B206"},
