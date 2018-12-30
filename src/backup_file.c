@@ -307,7 +307,7 @@ int backup_file_get_record_data(backup_file_t * bfile, unsigned char **data,
                                 unsigned int *size)
 {
     if (!bfile)
-        return;
+        return -1;
     if (!bfile->mbdb_record) {
         ERROR("%s: ERROR: no mbdb_record present\n", __func__);
         return -1;
