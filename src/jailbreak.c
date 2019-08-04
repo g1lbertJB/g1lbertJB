@@ -87,7 +87,8 @@ compatibility_t compatible_devices[] = {
     {"N88AP", "9B176"},
     {"K48AP", "9B176"},
     {"K93AP", "9B176"},
-    {"N94AP", "9B176"},
+
+    {"N94AP", "9B179"}, // 5.1 (different buildid)
 
     {"K93AP", "9B206"}, // 5.1.1
     {"N94AP", "9B206"},
