@@ -1,5 +1,5 @@
-#!/bin/sh
-libtoolize
+#!/bin/bash
+glibtoolize
 aclocal
 autoconf
 autoheader
