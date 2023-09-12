@@ -309,7 +309,7 @@ int main(int argc, char* argv[])
     
     sleep(4);
     run((char *[]) {"/sbin/reboot", NULL}, NULL);
-    
+
     return 0;
 }
 

