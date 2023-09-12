@@ -1,0 +1,3 @@
+[submodule "untethers/theos"]
+	path = untethers/theos
+	url = https://github.com/DHowett/theos

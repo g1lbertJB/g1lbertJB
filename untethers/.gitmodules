@@ -1,3 +1,0 @@
-[submodule "theos"]
-	path = theos
-	url = git://github.com/DHowett/theos.git
