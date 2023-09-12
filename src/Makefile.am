@@ -3,18 +3,18 @@ AM_CFLAGS =	                   \
 	$(libimobiledevice_CFLAGS) \
 	$(libplist_CFLAGS)         \
 	$(libzip_CFLAGS)           \
+	$(libcurl_CFLAGS)          \
 	$(zlib_CFLAGS)             \
-	$(libcurl_CFLAGS)	   \
-	$(libcrypto_CFLAGS)
+	$(openssl_CFLAGS)
 
-AM_LDFLAGS =			   \
+AM_LDFLAGS =\
 	$(AC_LDFLAGS)              \
 	$(libimobiledevice_LIBS)   \
 	$(libplist_LIBS)           \
 	$(libzip_LIBS)             \
+	$(libcurl_LIBS)            \
 	$(zlib_LIBS)               \
-	$(libcurl_LIBS)		   \
-	$(libcrypto_LIBS) 
+	$(openssl_LIBS)
 
 bin_PROGRAMS = unthreadedjb
 

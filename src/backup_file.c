@@ -184,6 +184,13 @@ void backup_file_set_target(backup_file_t * bfile, const char *target)
     mbdb_record_set_target(bfile->mbdb_record, target);
 }
 
+void backup_file_set_target_with_length(backup_file_t* bfile, const char* target, unsigned short length)
+{
+    if (!bfile)
+        return;
+    mbdb_record_set_target_with_length(bfile->mbdb_record, target, length);
+}
+
 static void debug_hash(const unsigned char *hash, int len)
 {
     int i;

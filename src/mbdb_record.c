@@ -329,11 +329,10 @@ void mbdb_record_set_path(mbdb_record_t * record, const char *path)
     }
 }
 
-void mbdb_record_set_target(mbdb_record_t * record, const char *target)
+void mbdb_record_set_target_with_length(mbdb_record_t* record, const char* target, unsigned short length)
 {
     if (!record)
         return;
-    unsigned short old_size = record->target_size;
     if (record->target) {
         free(record->target);
         record->target = NULL;
@@ -341,13 +340,19 @@ void mbdb_record_set_target(mbdb_record_t * record, const char *target)
     if (record->target_size > 0 && record->target_size < 0xFFFF) {
         record->this_size -= record->target_size;
     }
-    if (target && (strlen(target) > 0)) {
-        record->target_size = strlen(target);
-        record->target = strdup(target);
+    if (target && (length > 0)) {
+        record->target_size = length;
+        record->target = malloc(length);
+        memcpy(record->target, target, length);
         record->this_size += record->target_size;
     } else {
         record->target_size = 0xFFFF;
     }
+}
+
+void mbdb_record_set_target(mbdb_record_t* record, const char* target)
+{
+    return mbdb_record_set_target_with_length(record, target, strlen(target));
 }
 
 void mbdb_record_set_datahash(mbdb_record_t * record, const char *hash,

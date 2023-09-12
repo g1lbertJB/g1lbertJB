@@ -14,7 +14,7 @@ depcomp
 install-sh
 missing
 stamp-h1
-src/unthreadedjb
+unthreadedjb
 src/*.o
 src/.deps
 ltmain.sh
@@ -23,7 +23,6 @@ libtool
 *~
 m4
 .DS_Store
-pris0nbarake.tar.gz
-yeet
-theos
-untethers/.theos
+*kernelcache*
+deps
+var
