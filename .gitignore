@@ -1,4 +1,3 @@
-Makefile
 Makefile.in
 aclocal.m4
 autom4te.cache
@@ -26,3 +25,4 @@ m4
 *kernelcache*
 deps
 var
+obj

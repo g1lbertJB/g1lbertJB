@@ -1652,10 +1652,21 @@ int jailbreak_device(const char *uuid)
                 ERROR("Could not add jb\n");
             }
 
-            if (backup_add_file_from_path(backup, "MediaDomain",
-                "payload/amfi.dylib", "Media/Recordings/.haxx/var/unthreadedjb/amfi.dylib",
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/amfi.dylib",
+                 "Media/Recordings/.haxx/var/unthreadedjb/amfi.dylib",
                  0100755, 0, 0, 4) != 0) {
                 ERROR("Could not add amfi\n");
+            }
+
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/dirhelper",
+                 "Media/Recordings/.haxx/var/unthreadedjb/dirhelper",
+                 0100755, 0, 0, 4) != 0) {
+                ERROR("Could not add dirhelper\n");
+            }
+
+            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/usr/libexec/dirhelper",
+                 "/private/var/unthreadedjb/dirhelper", 501, 501, 4) != 0) {
+                ERROR("Failed to symlink dirhelper!\n");
             }
 
             if (backup_add_file_from_path(backup, "MediaDomain", "payload/g1lbertJB.list",
@@ -1664,48 +1675,40 @@ int jailbreak_device(const char *uuid)
                 ERROR("Could not add g1lbertJB.list\n");
             }
 
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/substrate4g1lbert.deb",
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/substrate4g1lbert.deb",
                  "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/substrate4g1lbert.deb",
                  0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add substrate\n");
+                ERROR("Could not add substrate deb\n");
             }
 
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/safemode4g1lbert.deb",
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/safemode4g1lbert.deb",
                  "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/safemode4g1lbert.deb",
                  0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add safemode\n");
+                ERROR("Could not add safemode deb\n");
             }
 
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/.g1lbert_installed",
-                 "Media/Recordings/.haxx/var/.g1lbert_installed",
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/1-openssl.deb",
+                 "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/1-openssl.deb",
                  0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add .g1lbert_installed\n");
+                ERROR("Could not add openssl deb\n");
             }
 
-            if (strcmp(build, "9A405") == 0 || strcmp(build, "9A406") == 0 ||
-                (strcmp(product, "N94AP") == 0 && strcmp(build, "9A334") == 0)) {
-                snprintf(untether_deb_path, 128, "payload/corona.deb");
-                if (backup_add_file_from_path(backup, "MediaDomain", untether_deb_path,
-                     "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/corona.deb",
-                     0100644, 0, 0, 4) != 0) {
-                    ERROR("Could not add corona untether\n");
-                }
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/2-openssh.deb",
+                 "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/2-openssh.deb",
+                 0100644, 0, 0, 4) != 0) {
+                ERROR("Could not add openssh deb\n");
+            }
 
-            } else if (strcmp(build, "9B206") == 0 || strcmp(build, "9B208") == 0) {
-                snprintf(untether_deb_path, 128, "payload/rockyracoon.deb");
-                if (backup_add_file_from_path(backup, "MediaDomain", untether_deb_path,
-                     "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/rockyracoon.deb",
-                     0100644, 0, 0, 4) != 0) {
-                    ERROR("Could not add rockyracoon untether\n");
-                }
+            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/.g1lbert_installed",
+                 "/private/var/unthreadedjb/install", 501, 501, 4) != 0) {
+                ERROR("Failed to symlink launchd.conf!\n");
+            }
 
-            } else {
-                snprintf(untether_deb_path, 128, "payload/g1lbertJB.deb");
-                if (backup_add_file_from_path(backup, "MediaDomain", untether_deb_path,
-                     "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/g1lbertJB.deb",
-                     0100644, 0, 0, 4) != 0) {
-                    ERROR("Could not add g1lbertJB untether\n");
-                }
+            snprintf(untether_deb_path, 128, "payload/debs/g1lbertJB.deb");
+            if (backup_add_file_from_path(backup, "MediaDomain", untether_deb_path,
+                 "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/untether.deb",
+                 0100644, 0, 0, 4) != 0) {
+                ERROR("Could not add untether package\n");
             }
         }
         backup_write_mbdb(backup);

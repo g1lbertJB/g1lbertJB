@@ -2,8 +2,6 @@
 #set -x
 
 koffset=./tools/koffset
-make_kernel_patchfile=./tools/make_kernel_patchfile
-apply_patchfile=./tools/apply_patchfile
 
 if [[ -z $1 || -z $2 ]]; then
     echo "Usage: ./coffit5.sh <decrypted kernelcache> <folder name>"

@@ -5,11 +5,12 @@ devices=(iPhone2,1 iPhone3,1 iPhone3,3 iPhone4,1 iPad1,1 iPad2,1 iPad2,2 iPad2,3
 # pack the untether binaries in tars, run after scrape1.sh, scrape2.sh, and make
 # make sure to have jq in PATH
 jq="$(which jq)"
-mkdir ../tars 2>/dev/null
+mkdir tars 2>/dev/null
 
 for device in ${devices[@]}; do
     echo $device
     json=$(curl "https://firmware-keys.ipsw.me/device/$device")
+    device_type=$device
     case $device in
         iPhone2,1 ) device_model=N88;;
         iPhone3,1 ) device_model=N90;;
@@ -40,15 +41,18 @@ for device in ${devices[@]}; do
     done
 
     for build in ${builds[@]}; do
-        echo ${device_model}_${build}
+        newtar="${device_type}_${build}"
+        echo $newtar
 
-        mkdir -p tar-${device_model}_${build}/private/etc tar-${device_model}_${build}/private/var/unthreadedjb
-        cp static/amfi.dylib tar-${device_model}_${build}/private/var/unthreadedjb
-        cp static/launchd.conf tar-${device_model}_${build}/private/etc
-        cp ${device_model}_${build}/obj/${device_model}_${build} tar-${device_model}_${build}/private/var/unthreadedjb/jb
-        chmod +x tar-${device_model}_${build}/private/var/unthreadedjb/*
-        ./mktar.sh tar-${device_model}_${build}
-        mv tar-${device_model}_${build}.tar ../tars/tar-${device_model_lower}_${build}.tar
-        rm -r tar-${device_model}_${build}
+        mkdir -p $newtar/private/etc $newtar/private/var/unthreadedjb $newtar/usr/libexec payload/${build}_${device_model}AP
+        cp static/amfi.dylib $newtar/private/var/unthreadedjb
+        cp static/launchd.conf $newtar/private/etc
+        cp static/dirhelper $newtar/usr/libexec
+        cp ${device_model}_${build}/obj/${device_model}_${build} payload/${build}_${device_model}AP/jb
+        cp ${device_model}_${build}/obj/${device_model}_${build} $newtar/private/var/unthreadedjb/jb
+        chmod +x $newtar/private/var/unthreadedjb/* $newtar/usr/libexec/*
+        ./mktar.sh $newtar
+        mv $newtar.tar tars/$newtar.tar
+        rm -r $newtar
     done
 done
