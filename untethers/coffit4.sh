@@ -48,7 +48,7 @@ thing="$(xxd -p patchfile)"
 search="2B64656275675F656E61626C6564" # +debug_enabled
 search=$(echo $search | tr '[:upper:]' '[:lower:]')
 v=$(echo $thing | grep -o "$search.*" | cut -c 29- | cut -c -8)
-KERNEL_DEBUG_ENABLED=0x$(echo ${v:6:2}${v:4:2}${v:2:2}${v:0:2} | tr '[:lower:]' '[:upper:]')
+KERNEL_DEBUG_ENABLED=0x$(echo ${v:6:2}${v:4:2}${v:2:2}${v:0:2} | tr '[:lower:]' '[:upper:]') # reverse endianness
 
 # weird attempt of getting sandbox offset manually:
 # search "0000024AFFFFFF6C000000100000024B" on hex editor
