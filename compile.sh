@@ -11,10 +11,13 @@ limd() {
 }
 
 if [[ $(uname) == "Darwin" ]]; then
-    if [[ ! -e $PREFIX/lib/libimobiledevice-1.0.6.dylib || ! -e deps ]]; then
-        curl -LO https://gist.github.com/LukeZGD/ed69632435390be0e41c66620510a19c/raw/aea321877d651a3391c8884fbbd7cd32fd0a2e71/limd-build-macos.sh
+    if [[ ! -d limd ]]; then
+        mkdir limd
+        pushd limd
+        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/b2bfe1ee612b992caf09b1b764e6d4d235644ae0/limd-build-macos.sh
         chmod +x limd-build-macos.sh
         ./limd-build-macos.sh
+        popd
     fi
 
     patch -f configure.ac < configure.patch
@@ -59,7 +62,7 @@ if [[ $(uname) == "Darwin" ]]; then
     rm -r output
     mkdir -p output/lib
     cp src/unthreadedjb output
-    cp $PREFIX/lib/libimobiledevice-1.0.6.dylib $PREFIX/lib/libusbmuxd-2.0.6.dylib $PREFIX/lib/libimobiledevice-glue-1.0.0.dylib $PREFIX/lib/libplist-2.0.4.dylib output/lib
+    cp limd/bin/lib/libimobiledevice-1.0.6.dylib limd/bin/lib/libusbmuxd-2.0.6.dylib limd/bin/lib/libimobiledevice-glue-1.0.0.dylib limd/bin/lib/libplist-2.0.4.dylib output/lib
     echo "Done. unthreadedjb binary and libs are in output/"
     exit
 fi
