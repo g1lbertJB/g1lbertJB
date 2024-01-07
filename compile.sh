@@ -91,22 +91,24 @@ if [[ ! -e $PREFIX/sbin/usbmuxd || ! -e $PREFIX/lib/libimobiledevice.a ]]; then
     make $JNUM install
     cd ..
 
-    sslver="1.1.1v"
-    curl -LO https://www.openssl.org/source/openssl-$sslver.tar.gz
-    tar -zxvf openssl-$sslver.tar.gz
-    cd openssl-$sslver
-    if [[ $(uname -m) == "a"* && $(getconf LONG_BIT) == 64 ]]; then
-        ./Configure no-ssl3-method linux-aarch64 "-Wa,--noexecstack -fPIC"
-    elif [[ $(uname -m) == "a"* ]]; then
-        ./Configure no-ssl3-method linux-generic32 "-Wa,--noexecstack -fPIC"
-    else
-        ./Configure no-ssl3-method enable-ec_nistp_64_gcc_128 linux-x86_64 "-Wa,--noexecstack -fPIC"
+    if [[ ! -e $PREFIX/lib/libcrypto.a || ! -e $PREFIX/lib/libssl.a ]]; then
+        sslver="1.1.1v"
+        curl -LO https://www.openssl.org/source/openssl-$sslver.tar.gz
+        tar -zxvf openssl-$sslver.tar.gz
+        cd openssl-$sslver
+        if [[ $(uname -m) == "a"* && $(getconf LONG_BIT) == 64 ]]; then
+            ./Configure no-ssl3-method linux-aarch64 "-Wa,--noexecstack -fPIC"
+        elif [[ $(uname -m) == "a"* ]]; then
+            ./Configure no-ssl3-method linux-generic32 "-Wa,--noexecstack -fPIC"
+        else
+            ./Configure no-ssl3-method enable-ec_nistp_64_gcc_128 linux-x86_64 "-Wa,--noexecstack -fPIC"
+        fi
+        make $JNUM depend
+        make $JNUM
+        make install_sw install_ssldirs
+        rm -rf /usr/local/lib/libcrypto.so* /usr/local/lib/libssl.so*
+        cd ..
     fi
-    make $JNUM depend
-    make $JNUM
-    make install_sw install_ssldirs
-    rm -rf /usr/local/lib/libcrypto.so* /usr/local/lib/libssl.so*
-    cd ..
 
     git clone https://github.com/lzfse/lzfse
     cd lzfse
