@@ -14,7 +14,7 @@ if [[ $(uname) == "Darwin" ]]; then
     if [[ ! -d limd ]]; then
         mkdir limd
         pushd limd
-        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/b2bfe1ee612b992caf09b1b764e6d4d235644ae0/limd-build-macos.sh
+        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/a9a67c9a3beed132a9956c927398c13a35e815af/limd-build-macos.sh
         chmod +x limd-build-macos.sh
         ./limd-build-macos.sh
         popd
@@ -45,7 +45,7 @@ if [[ $(uname) == "Darwin" ]]; then
     LIBZIP_LIBS="$DEPSDIR/$LIBZIP_DIR/build/lib/libzip.a -Xlinker /usr/lib/libbz2.dylib -Xlinker /usr/lib/liblzma.dylib -lz"
 
     if [[ ! -e $PREFIX/libressl-$LIBRESSL_VER || ! -e $PREFIX/libzip-$LIBZIP_VERSION ]]; then
-        sudo cp -R deps/libressl-$LIBRESSL_VER deps/libzip-$LIBZIP_VERSION deps/bin deps/lib deps/include $PREFIX
+        sudo cp -R limd/deps/libressl-$LIBRESSL_VER limd/deps/libzip-$LIBZIP_VERSION limd/deps/bin limd/deps/lib limd/deps/include $PREFIX
     fi
 
     ./autogen.sh \
