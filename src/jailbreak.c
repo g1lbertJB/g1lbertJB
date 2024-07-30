@@ -714,7 +714,7 @@ void stroke_lockdownd(device_t * device)
     size = __builtin_bswap32(size);
     if (size) {
         void *ptr = malloc(size);
-        idevice_connection_receive_timeout(connection, ptr, &size, &sent, 5000);
+        idevice_connection_receive_timeout(connection, ptr, size, &sent, 5000);
     }
     idevice_disconnect(connection);
 
