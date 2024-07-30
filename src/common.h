@@ -1,4 +1,4 @@
-/** 
+/**
  * Debug support
  */
 
@@ -23,12 +23,12 @@ int jailbreak_device(const char *uuid);
 #undef DEBUG
 
 #define DEBUG(x...) \
- 	printf("[debug] "), printf(x)
+{ printf("[debug] "), printf(x); fflush(stdout); }
 
 #define ERROR(x...) \
- 	do { printf("[error] "), printf(x), exit(-1); } while(0);
+do { printf("[error] "), printf(x); fflush(stdout); exit(-1); } while(0);
 
 #define WARN(x...) \
- 	printf("[warn] "), printf(x)
+{ printf("[warn] "), printf(x); fflush(stdout); }
 
 #endif
