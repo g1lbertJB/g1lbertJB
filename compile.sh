@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Compile script tested on: macOS 10.15, Ubuntu 20.04
+# Compile script tested on: macOS 10.13, Ubuntu 20.04
 PREFIX=/usr/local
 
 limd() {
@@ -14,7 +14,7 @@ if [[ $(uname) == "Darwin" ]]; then
     if [[ ! -d limd ]]; then
         mkdir limd
         pushd limd
-        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/a9a67c9a3beed132a9956c927398c13a35e815af/limd-build-macos.sh
+        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/41612817e2df4722d5c9cf34e760442ee48bb024/limd-build-macos.sh
         chmod +x limd-build-macos.sh
         ./limd-build-macos.sh
         popd
@@ -40,12 +40,12 @@ if [[ $(uname) == "Darwin" ]]; then
     LIMD_GLUE_LIBS="-L$PREFIX/lib -limobiledevice-glue-1.0"
     LIMD_GLUE_VERSION=`cat $PREFIX/lib/pkgconfig/libimobiledevice-glue-1.0.pc |grep Version: |cut -d " " -f 2`
     LIBZIP_VERSION=1.7.1
-    LIBZIP_DIR=libzip-$LIBZIP_VERSION
+    LIBZIP_DIR=libzip
     LIBZIP_CFLAGS="-I$DEPSDIR/$LIBZIP_DIR/lib -I$DEPSDIR/$LIBZIP_DIR/build"
     LIBZIP_LIBS="$DEPSDIR/$LIBZIP_DIR/build/lib/libzip.a -Xlinker /usr/lib/libbz2.dylib -Xlinker /usr/lib/liblzma.dylib -lz"
 
-    if [[ ! -e $PREFIX/libressl-$LIBRESSL_VER || ! -e $PREFIX/libzip-$LIBZIP_VERSION ]]; then
-        sudo cp -R limd/deps/libressl-$LIBRESSL_VER limd/deps/libzip-$LIBZIP_VERSION limd/deps/bin limd/deps/lib limd/deps/include $PREFIX
+    if [[ ! -e $PREFIX/libressl-$LIBRESSL_VER || ! -e $PREFIX/libzip ]]; then
+        sudo cp -R limd/deps/libressl-$LIBRESSL_VER limd/deps/libzip limd/deps/bin limd/deps/lib limd/deps/include $PREFIX
     fi
 
     ./autogen.sh \
