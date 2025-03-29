@@ -21,7 +21,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: g1lbertJB_linux-${{ matrix.arch.name }}
+          name: g1lbertJB-linux-${{ matrix.arch.name }}
           path: output/
 
   gilbertjb-windows:
@@ -42,5 +42,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: g1lbertJB_windows
+          name: g1lbertJB-windows-x86_64
           path: output/

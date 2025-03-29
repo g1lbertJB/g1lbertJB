@@ -152,7 +152,7 @@ if [[ ! -e $PREFIX/lib/libimobiledevice.a ]]; then
 
     sudo apt update
     sudo apt remove -y libssl-dev
-    sudo apt install -y pkg-config libtool automake g++ cmake git libusb-1.0-0-dev libreadline-dev libpng-dev git autopoint aria2 ca-certificates
+    sudo apt install -y pkg-config libtool automake g++ cmake git libusb-1.0-0-dev libreadline-dev libpng-dev libcurl4-openssl-dev git autopoint ca-certificates
 
     git clone https://github.com/madler/zlib
     git clone https://github.com/lzfse/lzfse
