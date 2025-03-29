@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Compile script tested on: macOS 10.13, Ubuntu 20.04
+# Compile script tested on: macOS 10.11, Ubuntu 22.04, Windows 10 LTSC 21H2
 PREFIX=/usr/local
 
 limd() {
@@ -9,6 +9,8 @@ limd() {
     install_name_tool -change $PREFIX/lib/libimobiledevice-glue-1.0.0.dylib @executable_path/lib/libimobiledevice-glue-1.0.0.dylib $1
     install_name_tool -change $PREFIX/lib/libplist-2.0.4.dylib @executable_path/lib/libplist-2.0.4.dylib $1
 }
+
+mkdir output tmp
 
 if [[ $(uname) == "Darwin" ]]; then
     if [[ ! -d limd ]]; then
@@ -59,11 +61,84 @@ if [[ $(uname) == "Darwin" ]]; then
     make clean
     make
     limd src/unthreadedjb
-    rm -r output
     mkdir -p output/lib
-    cp src/unthreadedjb output
+    cp src/unthreadedjb output/gilbertjb
     cp limd/bin/lib/libimobiledevice-1.0.6.dylib limd/bin/lib/libusbmuxd-2.0.6.dylib limd/bin/lib/libimobiledevice-glue-1.0.0.dylib limd/bin/lib/libplist-2.0.4.dylib output/lib
-    echo "Done. unthreadedjb binary and libs are in output/"
+    echo "Done. output is in output/"
+    exit
+
+elif [[ $OSTYPE == "cygwin" ]]; then
+    pacman -Syu --noconfirm
+    pacman -S --needed --noconfirm mingw-w64-x86_64-clang mingw-w64-x86_64-libzip mingw-w64-x86_64-brotli mingw-w64-x86_64-libpng mingw-w64-x86_64-python mingw-w64-x86_64-libunistring mingw-w64-x86_64-curl mingw-w64-x86_64-cython mingw-w64-x86_64-cmake
+    pacman -S --needed --noconfirm make automake autoconf pkg-config openssl libtool m4 libidn2 git libunistring libunistring-devel python cython python-devel unzip zip
+    export CC=gcc
+    export CXX=g++
+    export BEGIN_LDFLAGS="-Wl,--allow-multiple-definition"
+
+    pushd tmp
+
+    git clone https://github.com/libimobiledevice/libplist
+    git clone https://github.com/libimobiledevice/libimobiledevice-glue
+    git clone https://github.com/libimobiledevice/libusbmuxd
+    git clone https://github.com/libimobiledevice/libtatsu
+    git clone https://github.com/libimobiledevice/libimobiledevice
+
+    gzver=1.13
+    curl -LO https://ftp.wayne.edu/gnu/gzip/gzip-$gzver.zip
+    echo "Building gzip..."
+    unzip -d . gzip-$gzver.zip
+    cd gzip-$gzver
+    ./configure
+    make
+    cd ..
+
+    echo "Building libplist..."
+    cd libplist
+    ./autogen.sh --without-cython
+    make $JNUM install LDFLAGS="$BEGIN_LDFLAGS"
+    cd ..
+
+    echo "Building libimobiledevice-glue..."
+    cd libimobiledevice-glue
+    ./autogen.sh
+    make $JNUM install LDFLAGS="$BEGIN_LDFLAGS"
+    cd ..
+
+    echo "Building libusbmuxd..."
+    cd libusbmuxd
+    ./autogen.sh
+    make $JNUM install LDFLAGS="$BEGIN_LDFLAGS"
+    cd ..
+
+    echo "Building libtatsu..."
+    cd libtatsu
+    ./autogen.sh
+    make $JNUM install LDFLAGS="$BEGIN_LDFLAGS"
+    cd ..
+
+    echo "Building libimobiledevice..."
+    cd libimobiledevice
+    ./autogen.sh --without-cython
+    make $JNUM install LDFLAGS="$BEGIN_LDFLAGS"
+    cd ..
+
+    popd
+
+    ./autogen.sh
+    make $JNUM install LDFLAGS="$BEGIN_LDFLAGS" LIBS="-lcrypto"
+
+    mkdir output
+    cp tmp/gzip-$gzver/gzip.exe output/
+    cp src/.libs/unthreadedjb.exe output/gilbertjb.exe
+    cp /mingw64/bin/libcrypto-3-x64.dll output/
+    cp /mingw64/bin/libimobiledevice-1.0.dll output/
+    cp /mingw64/bin/libimobiledevice-glue-1.0.dll output/
+    cp /mingw64/bin/libplist-2.0.dll output/
+    cp /mingw64/bin/libssl-3-x64.dll output/
+    cp /mingw64/bin/libusbmuxd-2.0.dll output/
+    cp -R payload/ output/
+
+    echo "Done. output is in output/"
     exit
 fi
 
@@ -73,7 +148,7 @@ export CONF_ARGS="--disable-dependency-tracking --disable-silent-rules --prefix=
 export ALT_CONF_ARGS="--disable-dependency-tracking --disable-silent-rules --prefix=/usr/local"
 export JNUM="-j$(nproc)"
 
-if [[ ! -e $PREFIX/sbin/usbmuxd || ! -e $PREFIX/lib/libimobiledevice.a ]]; then
+if [[ ! -e $PREFIX/lib/libimobiledevice.a ]]; then
     sudo chown -R $USER: /usr/local
 
     sudo apt update
@@ -81,13 +156,21 @@ if [[ ! -e $PREFIX/sbin/usbmuxd || ! -e $PREFIX/lib/libimobiledevice.a ]]; then
     sudo apt install -y pkg-config libtool automake g++ cmake git libusb-1.0-0-dev libreadline-dev libpng-dev git autopoint aria2 ca-certificates
 
     git clone https://github.com/madler/zlib
+    git clone https://github.com/lzfse/lzfse
+    git clone https://github.com/libimobiledevice/libplist
+    git clone https://github.com/libimobiledevice/libimobiledevice-glue
+    git clone https://github.com/libimobiledevice/libusbmuxd
+    git clone https://github.com/libimobiledevice/libtatsu
+    git clone https://github.com/libimobiledevice/libimobiledevice
+    git clone https://github.com/nih-at/libzip
+    curl -LO https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+
     cd zlib
     ./configure --static
     make $JNUM LDFLAGS="$BEGIN_LDFLAGS"
     make install
     cd ..
 
-    curl -LO https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
     tar -zxvf bzip2-1.0.8.tar.gz
     cd bzip2-1.0.8
     make $JNUM
@@ -95,7 +178,7 @@ if [[ ! -e $PREFIX/sbin/usbmuxd || ! -e $PREFIX/lib/libimobiledevice.a ]]; then
     cd ..
 
     if [[ ! -e $PREFIX/lib/libcrypto.a || ! -e $PREFIX/lib/libssl.a ]]; then
-        sslver="1.1.1v"
+        sslver="1.1.1w"
         curl -LO https://www.openssl.org/source/openssl-$sslver.tar.gz
         tar -zxvf openssl-$sslver.tar.gz
         cd openssl-$sslver
@@ -113,49 +196,35 @@ if [[ ! -e $PREFIX/sbin/usbmuxd || ! -e $PREFIX/lib/libimobiledevice.a ]]; then
         cd ..
     fi
 
-    git clone https://github.com/lzfse/lzfse
     cd lzfse
     make $JNUM $ALT_CC_ARGS
     make $JNUM install
     cd ..
 
-    curl -LO http://archive.ubuntu.com/ubuntu/pool/main/libp/libplist/libplist_2.1.0.orig.tar.bz2
-    bzip2 -d libplist*.bz2
-    tar -xvf libplist*.tar -C .
-    cd libplist*/
+    cd libplist
     ./autogen.sh $CONF_ARGS $CC_ARGS
     make $JNUM
     make $JNUM install
     cd ..
 
-    curl -LO http://archive.ubuntu.com/ubuntu/pool/main/libu/libusbmuxd/libusbmuxd_2.0.1.orig.tar.bz2
-    bzip2 -d libusbmuxd*.bz2
-    tar -xvf libusbmuxd*.tar -C .
-    cd libusbmuxd*/
+    cd libusbmuxd
     ./autogen.sh $CONF_ARGS $CC_ARGS
     make $JNUM
     make $JNUM install
     cd ..
 
-    curl -LO http://archive.ubuntu.com/ubuntu/pool/main/libi/libimobiledevice/libimobiledevice_1.2.1~git20191129.9f79242.orig.tar.bz2
-    bzip2 -d libimobiledevice*.bz2
-    tar -xvf libimobiledevice*.tar -C .
-    cd libimobiledevice*/
+    cd libtatsu
+    ./autogen.sh $CONF_ARGS $CC_ARGS
+    make $JNUM
+    make $JNUM install
+    cd ..
+
+    cd libimobiledevice
     ./autogen.sh $CONF_ARGS $CC_ARGS LIBS="-L/usr/local/lib -lz -ldl"
     make $JNUM
     make $JNUM install
     cd ..
 
-    curl -LO http://archive.ubuntu.com/ubuntu/pool/main/u/usbmuxd/usbmuxd_1.1.1~git20191130.9af2b12.orig.tar.gz
-    tar -xvzf usbmuxd*.gz -C .
-    cd usbmuxd*/
-    ./autogen.sh $CONF_ARGS $CC_ARGS
-    make $JNUM LDFLAGS="-Wl,--allow-multiple-definition"
-    sudo make $JNUM install
-    sudo chown -R $USER: /usr/local
-    cd ..
-
-    git clone https://github.com/nih-at/libzip
     cd libzip
     sed -i 's/\"Build shared libraries\" ON/\"Build shared libraries\" OFF/g' CMakeLists.txt
     cmake $CC_ARGS .
@@ -167,4 +236,7 @@ fi
 ./autogen.sh
 make clean
 make LIBS="-ldl"
-echo "Done. unthreadedjb binary is in src/"
+
+cp src/unthreadedjb output/gilbertjb
+cp -R payload/ output/
+echo "Done. output is in output/"
