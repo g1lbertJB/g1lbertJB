@@ -22,9 +22,6 @@ if [[ $(uname) == "Darwin" ]]; then
         popd
     fi
 
-    patch -f configure.ac < configure.patch
-    patch -f src/idevicebackup2.c src/idevicebackup2.patch
-
     LIBRESSL_VER=2.2.7
     DEPSDIR=$PREFIX
     LIBSSL=$DEPSDIR/lib/libssl.35.tbd

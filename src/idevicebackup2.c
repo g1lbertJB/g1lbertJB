@@ -74,11 +74,6 @@ enum cmd_mode {
     CMD_LEAVE
 };
 
-enum plist_format_t {
-    PLIST_FORMAT_XML,
-    PLIST_FORMAT_BINARY
-};
-
 enum cmd_flags {
     CMD_FLAG_RESTORE_SYSTEM_FILES = (1 << 1),
     CMD_FLAG_RESTORE_REBOOT = (1 << 2),
@@ -453,7 +448,7 @@ static int plist_read_from_filename(plist_t * plist, const char *filename)
 }
 
 static int plist_write_to_filename(plist_t plist, const char *filename,
-                                   enum plist_format_t format)
+                                   plist_format_t format)
 {
     char *buffer = NULL;
     uint32_t length;
