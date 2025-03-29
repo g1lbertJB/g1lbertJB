@@ -244,4 +244,11 @@ make LIBS="-ldl"
 
 cp src/unthreadedjb output/gilbertjb
 cp gilbertjb.command output/
+if [[ ! -s output/usbmuxd ]]; then
+    platform_arch="$(uname -m)"
+    if [[ $(uname -m) == "a"* && $(getconf LONG_BIT) == 64 ]]; then
+        platform_arch="arm64"
+    fi
+    curl -L https://github.com/LukeZGD/Legacy-iOS-Kit/raw/refs/heads/main/bin/linux/$platform_arch/usbmuxd -o output/usbmuxd
+fi
 echo "Done. output is in output/"
