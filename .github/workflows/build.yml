@@ -1,0 +1,46 @@
+name: Compile g1lbertJB
+on: [push]
+jobs:
+  gilbertjb-linux:
+    strategy:
+      matrix:
+        arch:
+          - runner: ubuntu-22.04
+            name: x86_64
+          - runner: ubuntu-22.04-arm
+            name: aarch64
+
+    name: ${{ matrix.arch.name }}
+    runs-on: ${{ matrix.arch.runner }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run compile script
+        run: ./compile.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: g1lbertJB_linux-${{ matrix.arch.name }}
+          path: output/
+
+  gilbertjb-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MSYS
+          update: true
+
+      - name: Run compile script
+        run: ./compile.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: g1lbertJB_windows
+          path: output/
