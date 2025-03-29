@@ -29,6 +29,7 @@ int jailbreak_device(const char *uuid);
 #define ERROR(x...) \
  	do { printf("[error] "), printf(x), printf("You may now close this window. Try re-running the jailbreak.\n"), fflush(stdout), getchar(), exit(-1); } while(0);
 #else
+#define ERROR(x...) \
  	do { printf("[error] "), printf(x), fflush(stdout), exit(-1); } while(0);
 #endif
 
