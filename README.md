@@ -15,21 +15,21 @@
 
 ## Windows
 
-- Open g1lbertJB by running `g1lbertJB.exe`
+- Open g1lbertJB by running `gilbertjb.exe`
 
 
 ## macOS
 
-- Open g1lbertJB by running `g1lbertJB.command`
+- Open g1lbertJB by running `gilbertjb.command`
 
 ## Linux
 
-- Open Terminal, `cd` to the g1lbertJB directory, drag `gilbertjb` to the Terminal window, and press Enter/Return.
+- Open Terminal, drag `gilbertjb.command` to the Terminal window, and press Enter/Return.
 
 ## Notes
 
 - Ignore the "Error Code 1" and "Error Code 102" errors, this is normal and part of the jailbreaking process.
-- For Linux users, select the correct architecture. This will be `x86_64` for most users.
+- For Linux and macOS users, select the correct architecture. This will be `x86_64` for most PC/Intel Mac users, or `arm64` for Apple Silicon users or computers like the Raspberry Pi.
 - For Linux users, make sure that usbmuxd is installed, and run `sudo systemctl stop usbmuxd; sudo usbmuxd -pf` in another Terminal window before running g1lbertJB.
 
 # Acknowledgements

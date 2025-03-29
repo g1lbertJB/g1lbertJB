@@ -45,6 +45,7 @@
 #define LOCK_ATTEMPTS 50
 #define LOCK_WAIT 200000
 
+#include <sys/stat.h>
 #ifdef WIN32
 #include <windows.h>
 #include <conio.h>

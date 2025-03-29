@@ -63,7 +63,7 @@ if [[ $(uname) == "Darwin" ]]; then
     mkdir -p output/lib
     cp src/unthreadedjb output/gilbertjb
     cp limd/bin/lib/libimobiledevice-1.0.6.dylib limd/bin/lib/libusbmuxd-2.0.6.dylib limd/bin/lib/libimobiledevice-glue-1.0.0.dylib limd/bin/lib/libplist-2.0.4.dylib output/lib
-    cp g1lbertJB.command output/
+    cp gilbertjb.command output/
     echo "Done. output is in output/"
     exit
 
@@ -83,7 +83,7 @@ elif [[ $OSTYPE == "cygwin" ]]; then
     git clone https://github.com/libimobiledevice/libtatsu
     git clone https://github.com/libimobiledevice/libimobiledevice
 
-    gzver=1.13
+    gzver="1.13"
     curl -LO https://ftp.wayne.edu/gnu/gzip/gzip-$gzver.zip
     echo "Building gzip..."
     unzip -d . gzip-$gzver.zip
@@ -237,4 +237,5 @@ make clean
 make LIBS="-ldl"
 
 cp src/unthreadedjb output/gilbertjb
+cp gilbertjb.command output/
 echo "Done. output is in output/"
