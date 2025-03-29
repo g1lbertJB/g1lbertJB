@@ -6,7 +6,7 @@
 - For g1lbertCFW, go to the [g1lbertCFW repo](https://github.com/eatingurtoes/g1lbertCFW/).
 
 # Platform support
-- g1lbertJB supports macOS, Linux and Windows.
+- g1lbertJB supports macOS, Linux, and Windows.
 - On Windows, this makes use of bsdtar. Make sure that you are using Windows 10 1803 or newer.
 
 # How to use

@@ -206,6 +206,12 @@ if [[ ! -e $PREFIX/lib/libimobiledevice.a ]]; then
     make $JNUM install
     cd ..
 
+    cd libimobiledevice-glue
+    ./autogen.sh $CONF_ARGS $CC_ARGS
+    make $JNUM
+    make $JNUM install
+    cd ..
+
     cd libusbmuxd
     ./autogen.sh $CONF_ARGS $CC_ARGS
     make $JNUM
