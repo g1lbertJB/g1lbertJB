@@ -30,9 +30,11 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef WIN32
+#include <errno.h>
+#else
 #include <sys/errno.h>
-
-#include <assert.h>
+#endif
 
 #include <libimobiledevice/libimobiledevice.h>
 #include <libimobiledevice/lockdown.h>
@@ -47,6 +49,15 @@
 
 #include "common.h"
 #include "backup_kbag.h"
+
+static int __mkdir(const char *path, int mode)
+{
+    #ifdef WIN32
+    return mkdir(path);
+    #else
+    return mkdir(path, mode);
+    #endif
+}
 
 #define AFCTMP     "HackStore"
 
@@ -707,10 +718,10 @@ void stroke_lockdownd(device_t * device)
     if (idevice_connect(device->client, 62078, &connection)) {
         ERROR("Failed to connect to lockdownd.\n");
     }
-    idevice_connection_send(connection, &magic, 4, &sent);
+    idevice_connection_send(connection, (char *)&magic, 4, &sent);
     idevice_connection_send(connection, request, size, &sent);
 
-    idevice_connection_receive_timeout(connection, &size, 4, &sent, 1500);
+    idevice_connection_receive_timeout(connection, (char *)&size, 4, &sent, 1500);
     size = __builtin_bswap32(size);
     if (size) {
         void *ptr = malloc(size);
@@ -734,7 +745,11 @@ int jailbreak_device(const char *uuid)
         ERROR("Missing device UDID\n");
     }
 
+#ifdef WIN32
+    strcpy(backup_dir, "./g1lbertJB");
+#else
     strcpy(backup_dir, "/tmp/g1lbertJB");
+#endif
 
     DEBUG("Connecting to device...\n");
     int retries = 20;
@@ -857,8 +872,7 @@ int jailbreak_device(const char *uuid)
         // we're good, directory does not exist.
     } else {
         free_dictionary(list);
-        WARN("Looks like you attempted to apply this jailbreak and it failed. Will try to fix now...\n", 0);
-        sleep(5);
+        WARN("Looks like you attempted to apply this jailbreak and it failed. Will try to fix now... Re-run the jailbreak after this.\n", 0);
         goto fix;
     }
 
@@ -879,7 +893,7 @@ int jailbreak_device(const char *uuid)
     plist_t mobile_install_plist = NULL;
 
     rmdir_recursive(backup_dir);
-    mkdir(backup_dir, 0755);
+    __mkdir(backup_dir, 0755);
 
     file_relay_client_t frc = NULL;
     idevice_connection_t dump = NULL;
@@ -910,10 +924,15 @@ int jailbreak_device(const char *uuid)
     }
 
     char tmpthing[1024];
+    char tmpthing2[1024];
+    char tmpthing3[1024];
     snprintf(tmpthing, 1024, "%s/dump.cpio.gz", backup_dir);
+    snprintf(tmpthing2, 1024, "gzip -d %s/dump.cpio.gz", backup_dir);
+    snprintf(tmpthing3, 1024, "tar -xvf %s/dump.cpio", backup_dir);
 
-    FILE *f = fopen(tmpthing, "w");
-    assert(f != NULL);
+    FILE *f = fopen(tmpthing, "wb");
+    if (!f)
+        ERROR("Failed to open %s\n", tmpthing);
     int count = 0, length = 0;
     char buf[4096];
 
@@ -931,16 +950,17 @@ int jailbreak_device(const char *uuid)
 
     if (count) {
         DEBUG("Decompressing dump.cpio.gz...\n");
-        system("gzip -d /tmp/g1lbertJB/dump.cpio.gz");
+        system(tmpthing2);
         DEBUG("Extracting dump.cpio...\n");
         rmdir_recursive("var/mobile/Library/Caches");
         rmdir_recursive("private/var/mobile/Library/Caches");
-        system("cpio -idv < /tmp/g1lbertJB/dump.cpio");
+        system(tmpthing3);
         DEBUG("Grabbing com.apple.mobile.installation.plist...\n");
         FILE *newf = fopen("var/mobile/Library/Caches/com.apple.mobile.installation.plist", "rb");
         if (!newf) {
             newf = fopen("private/var/mobile/Library/Caches/com.apple.mobile.installation.plist", "rb");
-            assert(newf != NULL);
+            if (!newf)
+                ERROR("Failed to open com.apple.mobile.installation.plist\n");
         }
         fseek(newf, 0, SEEK_END);
         long newfsize = ftell(newf);
@@ -969,7 +989,8 @@ int jailbreak_device(const char *uuid)
         d = opendir("var/mobile/Library/Caches");
         if (!d) {
             d = opendir("private/var/mobile/Library/Caches");
-            assert(d != NULL);
+            if (!d)
+                ERROR("Failed to open Caches directory\n");
         }
         if (d) {
             while ((dir = readdir(d)) != NULL) {
@@ -1001,7 +1022,6 @@ int jailbreak_device(const char *uuid)
 
     // Modify com.apple.mobile whatever installation plist
     DEBUG("Modifying com.apple.mobile.installation.plist\n");
-    assert(mobile_install_plist != NULL);
     {
         plist_t system_plist = plist_access_path(mobile_install_plist, 2, "System", "com.apple.DemoApp");
         if (system_plist) {
@@ -1037,7 +1057,7 @@ int jailbreak_device(const char *uuid)
         // ios 6.0-6.1.2 stage 1 setup
         DEBUG("Stage 1: Preparing files\n");
 
-        mkdir(HKPTMP, 0755);
+        __mkdir(HKPTMP, 0755);
 
         // create Manifest.plist
         strcpy(dstf, HKPTMP);
@@ -1311,7 +1331,7 @@ int jailbreak_device(const char *uuid)
         rmdir_recursive(backup_dir);
 
         DEBUG("Stage 2: Creating backup (1/2)\n");
-        mkdir(backup_dir, 0755);
+        __mkdir(backup_dir, 0755);
         idevicebackup2(3, bargv);
     }
 
@@ -1465,7 +1485,7 @@ int jailbreak_device(const char *uuid)
         rmdir_recursive(backup_dir);
 
         DEBUG("Stage 3: Creating backup\n");
-        mkdir(backup_dir, 0755);
+        __mkdir(backup_dir, 0755);
         idevicebackup2(3, bargv);
     }
 
@@ -1750,6 +1770,11 @@ int jailbreak_device(const char *uuid)
     afc = NULL;
     device_free(device);
     device = NULL;
+
+#ifdef WIN32
+    printf("You may now close this window.\n");
+    getchar();
+#endif
 
     return 0;
 }

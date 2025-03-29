@@ -25,8 +25,12 @@ int jailbreak_device(const char *uuid);
 #define DEBUG(x...) \
 { printf("[debug] "), printf(x); fflush(stdout); }
 
+#ifdef WIN32
 #define ERROR(x...) \
-do { printf("[error] "), printf(x); fflush(stdout); exit(-1); } while(0);
+ 	do { printf("[error] "), printf(x), printf("You may now close this window. Try re-running the jailbreak.\n"), fflush(stdout), getchar(), exit(-1); } while(0);
+#else
+ 	do { printf("[error] "), printf(x), fflush(stdout), exit(-1); } while(0);
+#endif
 
 #define WARN(x...) \
 { printf("[warn] "), printf(x); fflush(stdout); }
