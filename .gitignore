@@ -27,3 +27,6 @@ deps
 var
 obj
 limd
+output
+COPYING
+Makefile

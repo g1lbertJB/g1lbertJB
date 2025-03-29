@@ -10,7 +10,9 @@ limd() {
     install_name_tool -change $PREFIX/lib/libplist-2.0.4.dylib @executable_path/lib/libplist-2.0.4.dylib $1
 }
 
-mkdir output tmp
+mkdir -p output/payload tmp
+cp -R payload/* output/payload/
+cp LICENSE README.md output/
 
 if [[ $(uname) == "Darwin" ]]; then
     if [[ ! -d limd ]]; then
@@ -41,7 +43,7 @@ if [[ $(uname) == "Darwin" ]]; then
     LIBZIP_VERSION=1.7.1
     LIBZIP_DIR=libzip
     LIBZIP_CFLAGS="-I$DEPSDIR/$LIBZIP_DIR/lib -I$DEPSDIR/$LIBZIP_DIR/build"
-    LIBZIP_LIBS="$DEPSDIR/$LIBZIP_DIR/build/lib/libzip.a -Xlinker /usr/lib/libbz2.dylib -Xlinker /usr/lib/liblzma.dylib -lz"
+    LIBZIP_LIBS="$DEPSDIR/$LIBZIP_DIR/build/lib/libzip.a -Xlinker $SDKDIR/usr/lib/libbz2.tbd -Xlinker $SDKDIR/usr/lib/liblzma.tbd -lz"
 
     if [[ ! -e $PREFIX/libressl-$LIBRESSL_VER || ! -e $PREFIX/libzip ]]; then
         sudo cp -R limd/deps/libressl-$LIBRESSL_VER limd/deps/libzip limd/deps/bin limd/deps/lib limd/deps/include $PREFIX
@@ -61,6 +63,7 @@ if [[ $(uname) == "Darwin" ]]; then
     mkdir -p output/lib
     cp src/unthreadedjb output/gilbertjb
     cp limd/bin/lib/libimobiledevice-1.0.6.dylib limd/bin/lib/libusbmuxd-2.0.6.dylib limd/bin/lib/libimobiledevice-glue-1.0.0.dylib limd/bin/lib/libplist-2.0.4.dylib output/lib
+    cp g1lbertJB.command output/
     echo "Done. output is in output/"
     exit
 
@@ -133,7 +136,6 @@ elif [[ $OSTYPE == "cygwin" ]]; then
     cp /mingw64/bin/libplist-2.0.dll output/
     cp /mingw64/bin/libssl-3-x64.dll output/
     cp /mingw64/bin/libusbmuxd-2.0.dll output/
-    cp -R payload/ output/
 
     echo "Done. output is in output/"
     exit
@@ -235,5 +237,4 @@ make clean
 make LIBS="-ldl"
 
 cp src/unthreadedjb output/gilbertjb
-cp -R payload/ output/
 echo "Done. output is in output/"
