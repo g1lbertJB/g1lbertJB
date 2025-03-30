@@ -24,7 +24,6 @@
 
 - Ignore the "Error Code 1" and "Error Code 102" errors, this is normal and part of the jailbreaking process.
 - For Linux and macOS users, select the correct architecture to download: `x86_64` for most PCs and Intel-based Macs, `arm64` for Apple Silicon Macs and ARM-based devices like Raspberry Pi.
-- For Linux users, make sure that usbmuxd is installed, and run `sudo systemctl stop usbmuxd; sudo usbmuxd -pf` in another Terminal window before running g1lbertJB.
 
 ## Acknowledgements
 
