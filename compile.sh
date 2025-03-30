@@ -251,4 +251,5 @@ if [[ ! -s output/usbmuxd ]]; then
     fi
     curl -L https://github.com/LukeZGD/Legacy-iOS-Kit/raw/refs/heads/main/bin/linux/$platform_arch/usbmuxd -o output/usbmuxd
 fi
+chmod +x output/usbmuxd
 echo "Done. output is in output/"
