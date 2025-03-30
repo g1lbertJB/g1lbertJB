@@ -928,7 +928,11 @@ int jailbreak_device(const char *uuid)
     char tmpthing3[1024];
     snprintf(tmpthing, 1024, "%s/dump.cpio.gz", backup_dir);
     snprintf(tmpthing2, 1024, "gzip -d %s/dump.cpio.gz", backup_dir);
+#ifdef WIN32
     snprintf(tmpthing3, 1024, "tar -xvf %s/dump.cpio", backup_dir);
+#else
+    snprintf(tmpthing3, 1024, "cpio -idv < %s/dump.cpio", backup_dir);
+#endif
 
     FILE *f = fopen(tmpthing, "wb");
     if (!f)
