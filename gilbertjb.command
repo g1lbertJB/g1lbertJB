@@ -33,6 +33,8 @@ if [[ $platform == "linux" ]]; then
     echo "[Log] Running usbmuxd"
     sudo -b ./usbmuxd -pf &>./usbmuxd.log
     sleep 1
+elif [[ $(uname) == "Darwin" ]]; then
+    xattr -cr *
 fi
 
 echo "[Log] Running g1lbertJB"
