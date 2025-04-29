@@ -93,12 +93,12 @@ compatibility_t compatible_devices[] = {
     {"N90AP", "10B146"},
 
     // iPhone 4 (GSM 2012)
-    {"N90BAP", "10A402"},
-    {"N90BAP", "10A403"},
-    {"N90BAP", "10A523"},
-    {"N90BAP", "10B137"},
-    {"N90BAP", "10B144"},
-    {"N90BAP", "10B146"},
+    {"N90bAP", "10A402"},
+    {"N90bAP", "10A403"},
+    {"N90bAP", "10A523"},
+    {"N90bAP", "10B137"},
+    {"N90bAP", "10B144"},
+    {"N90bAP", "10B146"},
 
     // iPhone 4 (CDMA)
     {"N92AP", "9A334"},
@@ -396,40 +396,6 @@ static int trash_var_backup(const char* path, const char* udid) /*{{{*/
     return res;
 } /*}}}*/
 
-static int cpio_get_file_name_length(void *cpio)
-{
-    if (cpio) {
-        char buffer[7];
-        int val;
-
-        memset(buffer, '\0', 7);
-
-        memcpy(&buffer, (void *)(cpio + 59), 6);    /* File Name Length */
-
-        val = strtoul(buffer, NULL, 8);
-        return val;
-    } else {
-        return 0;
-    }
-}
-
-static int cpio_get_file_length(void *cpio)
-{
-    if (cpio) {
-        char buffer[12];
-        int val;
-
-        memset(buffer, '\0', 12);
-
-        memcpy(&buffer, (void *)(cpio + 65), 11);   /* File Length */
-
-        val = strtoul(buffer, NULL, 8);
-        return val;
-    } else {
-        return 0;
-    }
-}
-
 /* recursively remove path, including path */
 static void rmdir_recursive(const char *path)
 {                               /*{{{ */
@@ -590,6 +556,11 @@ int verify_product(char *product, char *build)
         if (!strcmp(curcompat->product, product) && !strcmp(curcompat->build, build))
             return 0;
         curcompat++;
+    }
+    if (!strcmp(build, "10B329") || !strcmp(build, "10B350") || !strcmp(build, "10B400") || !strcmp(build, "10B500")) {
+        return 1;
+    } else if (strstr(build, "10A") || strstr(build, "10B")) {
+        return 0;
     }
     return 1;
 }
@@ -1469,7 +1440,7 @@ int jailbreak_device(const char *uuid)
         sleep(2);
     }
 
-    DEBUG("Stage 3: Giving it 5 seconds for root filesystem to remount\n");
+    DEBUG("Stage 2: Giving it 5 seconds for root filesystem to remount\n");
     sleep(5); // idk if this is really needed, but i'll keep it in here anyway
 
     if (build[0] == '1') {
