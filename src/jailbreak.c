@@ -1521,62 +1521,53 @@ int jailbreak_device(const char *uuid)
         char jb_path[128];
 
         if (build[0] == '1') {
-            // ios 6.0-6.1.2 evasi0n
-            if (backup_mkdir(backup, "MediaDomain", "Media/Recordings/.haxx/var/evasi0n", 0755, 0, 0, 4) != 0) {
-                ERROR("Could not make var/evasi0n folder\n");
+            // ios 6.0-6.1.2 aquila
+            if (backup_mkdir(backup, "MediaDomain", "Media/Recordings/.haxx/var/aquila", 0755, 0, 0, 4) != 0) {
+                ERROR("Could not make var/aquila folder\n");
             }
 
-            if (backup_mkdir(backup, "MediaDomain", "Media/Recordings/.haxx/var/mobile/Media/evasi0n-install", 0755, 501, 501, 4) != 0) {
-                ERROR("Could not make evasi0n-install folder\n");
+            snprintf(jb_path, 128, "payload/aquila/aquila");
+
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/tar",
+                 "Media/Recordings/.haxx/bin/tar",
+                 0100644, 0, 0, 4) != 0) {
+                ERROR("Could not add tar\n");
             }
 
-            snprintf(jb_path, 128, "payload/evasi0n/evasi0n");
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/evasi0n/launchd.conf",
-                 "Media/Recordings/.haxx/var/evasi0n/launchd.conf",
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/launchd.conf",
+                 "Media/Recordings/.haxx/etc/launchd.conf",
                  0100644, 0, 0, 4) != 0) {
                 ERROR("Could not add launchd.conf\n");
             }
 
-            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/private/etc/launchd.conf",
-                 "/private/var/evasi0n/launchd.conf", 501, 501, 4) != 0) {
-                ERROR("Failed to symlink launchd.conf!\n");
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/libmis",
+                 "Media/Recordings/.haxx/var/aquila/_libmis.dylib",
+                 0100755, 0, 0, 4) != 0) {
+                ERROR("Could not add libmis\n");
             }
 
             if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/Cydia.tar",
-                 "Media/Recordings/.haxx/var/mobile/Media/evasi0n-install/Cydia.tar",
-                 0100644, 501, 501, 4) != 0) {
+                 "Media/Recordings/.haxx/var/aquila/bootstrap.tar",
+                 0100644, 0, 0, 4) != 0) {
                 ERROR("Could not add Cydia\n");
             }
 
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/evasi0n/packagelist.tar",
-                 "Media/Recordings/.haxx/var/mobile/Media/evasi0n-install/packagelist.tar",
-                 0100644, 501, 501, 4) != 0) {
-                ERROR("Could not add packagelist\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/evasi0n/extras.tar",
-                 "Media/Recordings/.haxx/var/mobile/Media/evasi0n-install/extras.tar",
-                 0100644, 501, 501, 4) != 0) {
-                ERROR("Could not add extras\n");
-            }
-
             if (backup_add_file_from_path(backup, "MediaDomain", jb_path,
-                 "Media/Recordings/.haxx/var/evasi0n/evasi0n",
+                 "Media/Recordings/.haxx/var/aquila/aquila",
                  0100755, 0, 0, 4) != 0) {
                 ERROR("Could not add jb\n");
             }
 
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/evasi0n/amfi.dylib",
-                 "Media/Recordings/.haxx/var/evasi0n/amfi.dylib",
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/installer",
+                 "Media/Recordings/.haxx/var/aquila/installer",
                  0100755, 0, 0, 4) != 0) {
-                ERROR("Could not add amfi\n");
+                ERROR("Could not add installer\n");
             }
 
-            if (backup_add_file_from_data(backup, "MediaDomain", uuid, strlen(uuid),
-                "Media/Recordings/.haxx/var/evasi0n/udid",
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/splashscreen.jp2",
+                 "Media/Recordings/.haxx/var/aquila/splashscreen.jp2",
                  0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add udid\n");
+                ERROR("Could not add splashscreen\n");
             }
 
         } else {
