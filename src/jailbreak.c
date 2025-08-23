@@ -1528,16 +1528,26 @@ int jailbreak_device(const char *uuid)
 
             snprintf(jb_path, 128, "payload/aquila/aquila");
 
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/tar",
-                 "Media/Recordings/.haxx/bin/tar",
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/launchd.conf",
+                 "Media/Recordings/.haxx/var/aquila/launchd.conf",
                  0100644, 0, 0, 4) != 0) {
+                ERROR("Could not add launchd.conf\n");
+            }
+
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/tar",
+                 "Media/Recordings/.haxx/var/aquila/tar",
+                 0100755, 0, 0, 4) != 0) {
                 ERROR("Could not add tar\n");
             }
 
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/launchd.conf",
-                 "Media/Recordings/.haxx/etc/launchd.conf",
-                 0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add launchd.conf\n");
+            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/private/etc/launchd.conf",
+                 "/private/var/aquila/launchd.conf", 501, 501, 4) != 0) {
+                ERROR("Failed to symlink launchd.conf!\n");
+            }
+
+            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/bin/tar",
+                 "/private/var/aquila/tar", 501, 501, 4) != 0) {
+                ERROR("Failed to symlink tar!\n");
             }
 
             if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/libmis",
