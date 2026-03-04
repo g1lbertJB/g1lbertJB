@@ -632,7 +632,7 @@ int main(int argc, char *argv[])
         if (as) {
             if (strcmp(as, "Unactivated") == 0) {
                 free(as);
-                ERROR("The attached device is not activated. You need to activate it before it can be used with UnthreadedJB.\n");
+                ERROR("The attached device is not activated. You need to activate it before it can be used with g1lbertJB.\n");
                 lockdown_free(lockdown);
                 device_free(device);
                 return -1;
@@ -1471,7 +1471,6 @@ int jailbreak_device(const char *uuid)
         ERROR("failed to open backup\n");
     }
 
-    // Do it again
     {
         if (backup_mkdir(backup, "MediaDomain", "Media", 0755, 501, 501, 4) != 0) {
             ERROR("Could not make folder\n");
@@ -1518,137 +1517,80 @@ int jailbreak_device(const char *uuid)
             ERROR("Could not add openssh deb\n");
         }
 
-        char jb_path[128];
+        if (backup_mkdir(backup, "MediaDomain", "Media/Recordings/.haxx/var/aquila", 0755, 0, 0, 4) != 0) {
+            ERROR("Could not make var/aquila folder\n");
+        }
 
-        if (build[0] == '1') {
-            // ios 6.0-6.1.2 aquila
-            if (backup_mkdir(backup, "MediaDomain", "Media/Recordings/.haxx/var/aquila", 0755, 0, 0, 4) != 0) {
-                ERROR("Could not make var/aquila folder\n");
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/launchd.conf",
+            "Media/Recordings/.haxx/var/aquila/launchd.conf",
+            0100644, 0, 0, 4) != 0) {
+            ERROR("Could not add launchd.conf\n");
+        }
+
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/tar",
+            "Media/Recordings/.haxx/var/aquila/tar",
+            0100755, 0, 0, 4) != 0) {
+            ERROR("Could not add tar\n");
+        }
+
+        if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/private/etc/launchd.conf",
+            "/private/var/aquila/launchd.conf", 501, 501, 4) != 0) {
+            ERROR("Failed to symlink launchd.conf!\n");
+        }
+
+        if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/bin/tar",
+            "/private/var/aquila/tar", 501, 501, 4) != 0) {
+            ERROR("Failed to symlink tar!\n");
+        }
+
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/libmis",
+            "Media/Recordings/.haxx/var/aquila/amfi_bypass.dylib",
+            0100755, 0, 0, 4) != 0) {
+            ERROR("Could not add libmis\n");
+        }
+
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/Cydia.tar",
+            "Media/Recordings/.haxx/var/aquila/bootstrap.tar",
+            0100644, 0, 0, 4) != 0) {
+            ERROR("Could not add Cydia\n");
+        }
+
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/truststore.tar",
+            "Media/Recordings/.haxx/var/aquila/truststore.tar",
+            0100644, 0, 0, 4) != 0) {
+            ERROR("Could not add truststore\n");
             }
 
-            snprintf(jb_path, 128, "payload/aquila/aquila");
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/aquila",
+            "Media/Recordings/.haxx/var/aquila/aquila",
+            0100755, 0, 0, 4) != 0) {
+            ERROR("Could not add jb\n");
+        }
 
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/launchd.conf",
-                 "Media/Recordings/.haxx/var/aquila/launchd.conf",
-                 0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add launchd.conf\n");
-            }
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/installer",
+            "Media/Recordings/.haxx/var/aquila/installer",
+            0100755, 0, 0, 4) != 0) {
+            ERROR("Could not add installer\n");
+        }
 
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/tar",
-                 "Media/Recordings/.haxx/var/aquila/tar",
-                 0100755, 0, 0, 4) != 0) {
-                ERROR("Could not add tar\n");
-            }
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/splashscreen.jp2",
+            "Media/Recordings/.haxx/var/aquila/splashscreen.jp2",
+            0100644, 0, 0, 4) != 0) {
+            ERROR("Could not add splashscreen\n");
+        }
 
-            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/private/etc/launchd.conf",
-                 "/private/var/aquila/launchd.conf", 501, 501, 4) != 0) {
-                ERROR("Failed to symlink launchd.conf!\n");
-            }
-
-            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/bin/tar",
-                 "/private/var/aquila/tar", 501, 501, 4) != 0) {
-                ERROR("Failed to symlink tar!\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/libmis",
-                 "Media/Recordings/.haxx/var/aquila/_libmis.dylib",
-                 0100755, 0, 0, 4) != 0) {
-                ERROR("Could not add libmis\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/Cydia.tar",
-                 "Media/Recordings/.haxx/var/aquila/bootstrap.tar",
-                 0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add Cydia\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", jb_path,
-                 "Media/Recordings/.haxx/var/aquila/aquila",
-                 0100755, 0, 0, 4) != 0) {
-                ERROR("Could not add jb\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/installer",
-                 "Media/Recordings/.haxx/var/aquila/installer",
-                 0100755, 0, 0, 4) != 0) {
-                ERROR("Could not add installer\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/splashscreen.jp2",
-                 "Media/Recordings/.haxx/var/aquila/splashscreen.jp2",
-                 0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add splashscreen\n");
-            }
-
-        } else {
-            // ios 5.0-5.1.1 pris0nbarake
-            if (backup_mkdir(backup, "MediaDomain", "Media/Recordings/.haxx/var/unthreadedjb", 0755, 0, 0, 4) != 0) {
-                ERROR("Could not make var/unthreadedjb folder\n");
-            }
-
-            snprintf(jb_path, 128, "payload/%s_%s/jb", build, product);
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/launchd.conf",
-                 "Media/Recordings/.haxx/var/unthreadedjb/launchd.conf",
-                 0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add launchd.conf\n");
-            }
-
-            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/private/etc/launchd.conf",
-                 "/private/var/unthreadedjb/launchd.conf", 501, 501, 4) != 0) {
-                ERROR("Failed to symlink launchd.conf!\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/Cydia.tar",
-                 "Media/Recordings/.haxx/var/unthreadedjb/Cydia.tar",
-                 0100644, 501, 501, 4) != 0) {
-                ERROR("Could not add Cydia\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", jb_path,
-                 "Media/Recordings/.haxx/var/unthreadedjb/jb",
-                 0100755, 0, 0, 4) != 0) {
-                ERROR("Could not add jb\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/amfi.dylib",
-                 "Media/Recordings/.haxx/var/unthreadedjb/amfi.dylib",
-                 0100755, 0, 0, 4) != 0) {
-                ERROR("Could not add amfi\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/dirhelper",
-                 "Media/Recordings/.haxx/var/unthreadedjb/dirhelper",
-                 0100755, 0, 0, 4) != 0) {
-                ERROR("Could not add dirhelper\n");
-            }
-
-            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/usr/libexec/dirhelper",
-                 "/private/var/unthreadedjb/dirhelper", 501, 501, 4) != 0) {
-                ERROR("Failed to symlink dirhelper!\n");
-            }
-
+        // ios 5 substrate and safe mode
+        if (build[0] != '1') {
             if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/substrate4g1lbert.deb",
-                 "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/substrate4g1lbert.deb",
-                 0100644, 0, 0, 4) != 0) {
+                "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/substrate4g1lbert.deb",
+                0100644, 0, 0, 4) != 0) {
                 ERROR("Could not add substrate deb\n");
             }
 
             if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/safemode4g1lbert.deb",
-                 "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/safemode4g1lbert.deb",
-                 0100644, 0, 0, 4) != 0) {
+                "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/safemode4g1lbert.deb",
+                0100644, 0, 0, 4) != 0) {
                 ERROR("Could not add safemode deb\n");
-            }
-
-            if (backup_symlink(backup, "MediaDomain", "Media/Recordings/.haxx/.g1lbert_installed",
-                 "/private/var/unthreadedjb/install", 501, 501, 4) != 0) {
-                ERROR("Failed to symlink launchd.conf!\n");
-            }
-
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/g1lbertJB.deb",
-                 "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/g1lbertJB.deb",
-                 0100644, 0, 0, 4) != 0) {
-                ERROR("Could not add untether package\n");
             }
         }
         backup_write_mbdb(backup);
