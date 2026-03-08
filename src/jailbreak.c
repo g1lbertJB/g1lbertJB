@@ -61,235 +61,6 @@ static int __mkdir(const char *path, int mode)
 
 #define AFCTMP     "HackStore"
 
-typedef struct _compatibility {
-    char *product;
-    char *build;
-} compatibility_t;
-
-compatibility_t compatible_devices[] = {
-    // iPhone 3GS
-    {"N88AP", "9A334"},
-    {"N88AP", "9A405"},
-    {"N88AP", "9B176"},
-    {"N88AP", "9B206"},
-    {"N88AP", "10A402"},
-    {"N88AP", "10A403"},
-    {"N88AP", "10A523"},
-    {"N88AP", "10B137"},
-    {"N88AP", "10B141"},
-    {"N88AP", "10B146"},
-
-    // iPhone 4 (GSM)
-    {"N90AP", "9A334"},
-    {"N90AP", "9A405"},
-    {"N90AP", "9B176"},
-    {"N90AP", "9B206"},
-    {"N90AP", "9B208"},
-    {"N90AP", "10A402"},
-    {"N90AP", "10A403"},
-    {"N90AP", "10A523"},
-    {"N90AP", "10B137"},
-    {"N90AP", "10B144"},
-    {"N90AP", "10B146"},
-
-    // iPhone 4 (GSM 2012)
-    {"N90bAP", "10A402"},
-    {"N90bAP", "10A403"},
-    {"N90bAP", "10A523"},
-    {"N90bAP", "10B137"},
-    {"N90bAP", "10B144"},
-    {"N90bAP", "10B146"},
-
-    // iPhone 4 (CDMA)
-    {"N92AP", "9A334"},
-    {"N92AP", "9A405"},
-    {"N92AP", "9B176"},
-    {"N92AP", "9B206"},
-    {"N92AP", "10A402"},
-    {"N92AP", "10A403"},
-    {"N92AP", "10A523"},
-    {"N92AP", "10B137"},
-    {"N92AP", "10B141"},
-    {"N92AP", "10B146"},
-
-    // iPhone 4S
-    {"N94AP", "9A334"},
-    {"N94AP", "9A405"},
-    {"N94AP", "9A406"},
-    {"N94AP", "9B179"},
-    {"N94AP", "9B206"},
-    {"N94AP", "10A402"},
-    {"N94AP", "10A403"},
-    {"N94AP", "10A523"},
-    {"N94AP", "10B137"},
-    {"N94AP", "10B142"},
-    {"N94AP", "10B145"},
-    {"N94AP", "10B146"},
-
-    // iPhone 5 (GSM)
-    {"N41AP", "10A402"},
-    {"N41AP", "10A405"},
-    {"N41AP", "10A525"},
-    {"N41AP", "10A551"},
-    {"N41AP", "10B137"},
-    {"N41AP", "10B143"},
-    {"N41AP", "10B146"},
-
-    // iPhone 5 (Global)
-    {"N42AP", "10A402"},
-    {"N42AP", "10A405"},
-    {"N42AP", "10A525"},
-    {"N42AP", "10A551"},
-    {"N42AP", "10B137"},
-    {"N42AP", "10B143"},
-    {"N42AP", "10B146"},
-
-    // iPad
-    {"K48AP", "9A334"},
-    {"K48AP", "9A405"},
-    {"K48AP", "9B176"},
-    {"K48AP", "9B206"},
-
-    // iPad 2 (Wi-Fi)
-    {"K93AP", "9A334"},
-    {"K93AP", "9A405"},
-    {"K93AP", "9B176"},
-    {"K93AP", "9B206"},
-    {"K93AP", "10A402"},
-    {"K93AP", "10A403"},
-    {"K93AP", "10A523"},
-    {"K93AP", "10B137"},
-    {"K93AP", "10B141"},
-    {"K93AP", "10B146"},
-
-    // iPad 2 (GSM)
-    {"K94AP", "9A334"},
-    {"K94AP", "9A405"},
-    {"K94AP", "9B176"},
-    {"K94AP", "9B206"},
-    {"K94AP", "10A402"},
-    {"K94AP", "10A403"},
-    {"K94AP", "10A523"},
-    {"K94AP", "10B137"},
-    {"K94AP", "10B141"},
-    {"K94AP", "10B146"},
-
-    // iPad 2 (CDMA)
-    {"K95AP", "9A334"},
-    {"K95AP", "9A405"},
-    {"K95AP", "9B176"},
-    {"K95AP", "9B206"},
-    {"K95AP", "10A402"},
-    {"K95AP", "10A403"},
-    {"K95AP", "10A523"},
-    {"K95AP", "10B137"},
-    {"K95AP", "10B141"},
-    {"K95AP", "10B146"},
-
-    // iPad 2 (Rev A)
-    {"K93aAP", "9B176"},
-    {"K93aAP", "9B206"},
-    {"K93aAP", "10A402"},
-    {"K93aAP", "10A403"},
-    {"K93aAP", "10A523"},
-    {"K93aAP", "10B137"},
-    {"K93aAP", "10B141"},
-    {"K93aAP", "10B146"},
-
-    // iPad 3 (Wi-Fi)
-    {"J1AP", "9B176"},
-    {"J1AP", "9B206"},
-    {"J1AP", "10A402"},
-    {"J1AP", "10A403"},
-    {"J1AP", "10A523"},
-    {"J1AP", "10B137"},
-    {"J1AP", "10B141"},
-    {"J1AP", "10B146"},
-
-    // iPad 3 (CDMA)
-    {"J2AP", "9B176"},
-    {"J2AP", "9B206"},
-    {"J2AP", "10A402"},
-    {"J2AP", "10A403"},
-    {"J2AP", "10A523"},
-    {"J2AP", "10B137"},
-    {"J2AP", "10B141"},
-    {"J2AP", "10B146"},
-
-    // iPad 3 (GSM)
-    {"J2aAP", "9B176"},
-    {"J2aAP", "9B206"},
-    {"J2aAP", "10A402"},
-    {"J2aAP", "10A403"},
-    {"J2aAP", "10A523"},
-    {"J2aAP", "10B137"},
-    {"J2aAP", "10B141"},
-    {"J2aAP", "10B146"},
-
-    // iPad 4 (Wi-Fi)
-    {"P101AP", "10A407"},
-    {"P101AP", "10A523"},
-    {"P101AP", "10B141"},
-    {"P101AP", "10B146"},
-
-    // iPad 4 (GSM)
-    {"P102AP", "10A8426"},
-    {"P102AP", "10B137"},
-    {"P102AP", "10B141"},
-    {"P102AP", "10B147"},
-
-    // iPad 4 (Global)
-    {"P103AP", "10A8426"},
-    {"P103AP", "10B137"},
-    {"P103AP", "10B141"},
-    {"P103AP", "10B147"},
-
-    // iPad mini (Wi-Fi)
-    {"P105AP", "10A406"},
-    {"P105AP", "10A523"},
-    {"P105AP", "10A550"},
-    {"P105AP", "10B141"},
-    {"P105AP", "10B146"},
-
-    // iPad mini (GSM)
-    {"P106AP", "10A8426"},
-    {"P106AP", "10A8500"},
-    {"P106AP", "10B137"},
-    {"P106AP", "10B141"},
-    {"P106AP", "10B147"},
-
-    // iPad mini (Global)
-    {"P107AP", "10A8426"},
-    {"P107AP", "10A8500"},
-    {"P107AP", "10B137"},
-    {"P107AP", "10B141"},
-    {"P107AP", "10B147"},
-
-    // iPod touch 3rd gen
-    {"N18AP", "9A334"},
-    {"N18AP", "9A405"},
-    {"N18AP", "9B176"},
-    {"N18AP", "9B206"},
-
-    // iPod touch 4th gen
-    {"N81AP", "9A334"},
-    {"N81AP", "9A405"},
-    {"N81AP", "9B176"},
-    {"N81AP", "9B206"},
-    {"N81AP", "10A403"},
-    {"N81AP", "10A523"},
-    {"N81AP", "10B144"},
-    {"N81AP", "10B146"},
-
-    // iPod touch 5th gen
-    {"N78AP", "10A406"},
-    {"N78AP", "10A523"},
-    {"N78AP", "10B141"},
-    {"N78AP", "10B146"},
-
-    {NULL, NULL}
-};
-
 static char* gen_uuid() /*{{{*/
 {
     char *uuid = (char *) malloc(sizeof(char) * 37);
@@ -534,32 +305,9 @@ static void idevice_event_cb(const idevice_event_t * event, void *user_data)
 static int num_csstores = 0;
 int csstores[16];
 
-int check_consistency(char *product, char *build)
+int verify_product(char *build)
 {
-    struct stat buf;
-    char prodstr[32];
-
-    // Verify main directory exists
-    snprintf(prodstr, 32, "payload/%s_%s", build, product);
-
-    if (stat(prodstr, &buf) == -1 && build[0] == '9') {
-        ERROR("Failed to open directory \"payload/%s\"\n", prodstr);
-    }
-    // Seems legit.
-    return 0;
-}
-
-int verify_product(char *product, char *build)
-{
-    compatibility_t *curcompat = &compatible_devices[0];
-    while ((curcompat) && (curcompat->product != NULL)) {
-        if (!strcmp(curcompat->product, product) && !strcmp(curcompat->build, build))
-            return 0;
-        curcompat++;
-    }
-    if (!strcmp(build, "10B329") || !strcmp(build, "10B350") || !strcmp(build, "10B400") || !strcmp(build, "10B500")) {
-        return 1;
-    } else if (strstr(build, "10A") || strstr(build, "10B")) {
+    if (strstr(build, "9A") || strstr(build, "9B") || strstr(build, "10A") || strstr(build, "10B")) {
         return 0;
     }
     return 1;
@@ -606,21 +354,16 @@ int main(int argc, char *argv[])
 
     DEBUG("Device is a %s with build %s\n", product, build);
 
-    if (build[0] == '7' || build[0] == '8') {
-        // Too lazy to add Mbdx support for 4.3, otherwise this'd all work out of the box.
+    if (build[0] == '8') {
         fprintf(stderr,
                 "Installing an untether via this method is not supported for this build.\n"
-                "For build %s, use Legacy iOS Kit to jailbreak.\n",
+                "For build %s, use Aquila to jailbreak.\n",
                 build);
         ERROR("Unsupported build\n");
     }
 
-    if (verify_product(product, build) != 0) {
+    if (verify_product(build) != 0) {
         ERROR("Device/version is not supported\n");
-    }
-
-    if (check_consistency(product, build) != 0) {
-        ERROR("Failed consistency checks!\n");
     }
 
     plist_t pl = NULL;
@@ -1505,15 +1248,27 @@ int jailbreak_device(const char *uuid)
             ERROR("Could not make var/root/Media/Cydia/AutoInstall folder\n");
         }
 
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/Cydia.tar",
+            "Media/Recordings/.haxx/var/aquila/bootstrap.tar",
+            0100644, 0, 0, 4) != 0) {
+            ERROR("Could not add Cydia\n");
+        }
+
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/truststore.tar",
+            "Media/Recordings/.haxx/var/aquila/truststore.tar",
+            0100644, 0, 0, 4) != 0) {
+            ERROR("Could not add truststore\n");
+        }
+
         if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/1-openssl.deb",
-             "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/1-openssl.deb",
-             0100644, 0, 0, 4) != 0) {
+            "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/1-openssl.deb",
+            0100644, 0, 0, 4) != 0) {
             ERROR("Could not add openssl deb\n");
         }
 
         if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/2-openssh.deb",
-             "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/2-openssh.deb",
-             0100644, 0, 0, 4) != 0) {
+            "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/2-openssh.deb",
+            0100644, 0, 0, 4) != 0) {
             ERROR("Could not add openssh deb\n");
         }
 
@@ -1543,23 +1298,11 @@ int jailbreak_device(const char *uuid)
             ERROR("Failed to symlink tar!\n");
         }
 
-        if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/libmis",
+        if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/amfi_bypass.dylib",
             "Media/Recordings/.haxx/var/aquila/amfi_bypass.dylib",
             0100755, 0, 0, 4) != 0) {
-            ERROR("Could not add libmis\n");
+            ERROR("Could not add amfi\n");
         }
-
-        if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/Cydia.tar",
-            "Media/Recordings/.haxx/var/aquila/bootstrap.tar",
-            0100644, 0, 0, 4) != 0) {
-            ERROR("Could not add Cydia\n");
-        }
-
-        if (backup_add_file_from_path(backup, "MediaDomain", "payload/common/truststore.tar",
-            "Media/Recordings/.haxx/var/aquila/truststore.tar",
-            0100644, 0, 0, 4) != 0) {
-            ERROR("Could not add truststore\n");
-            }
 
         if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/aquila",
             "Media/Recordings/.haxx/var/aquila/aquila",
