@@ -1298,12 +1298,6 @@ int jailbreak_device(const char *uuid)
             ERROR("Failed to symlink tar!\n");
         }
 
-        if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/amfi_bypass.dylib",
-            "Media/Recordings/.haxx/var/aquila/amfi_bypass.dylib",
-            0100755, 0, 0, 4) != 0) {
-            ERROR("Could not add amfi\n");
-        }
-
         if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/aquila",
             "Media/Recordings/.haxx/var/aquila/aquila",
             0100755, 0, 0, 4) != 0) {
@@ -1322,8 +1316,21 @@ int jailbreak_device(const char *uuid)
             ERROR("Could not add splashscreen\n");
         }
 
-        // ios 5 substrate and safe mode
-        if (build[0] != '1') {
+
+        if (build[0] == '1') {
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/amfi_bypass.dylib",
+                "Media/Recordings/.haxx/var/aquila/amfi_bypass.dylib",
+                0100755, 0, 0, 4) != 0) {
+                ERROR("Could not add amfi\n");
+            }
+
+        } else { // ios 5 amfi, substrate and safe mode
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/amfi_bypass.dylib",
+                "Media/Recordings/.haxx/var/aquila/amfi_bypass_4_5.dylib",
+                0100755, 0, 0, 4) != 0) {
+                ERROR("Could not add amfi\n");
+            }
+
             if (backup_add_file_from_path(backup, "MediaDomain", "payload/debs/substrate4g1lbert.deb",
                 "Media/Recordings/.haxx/var/root/Media/Cydia/AutoInstall/substrate4g1lbert.deb",
                 0100644, 0, 0, 4) != 0) {
