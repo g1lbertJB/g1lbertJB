@@ -1325,8 +1325,8 @@ int jailbreak_device(const char *uuid)
             }
 
         } else { // ios 5 amfi, substrate and safe mode
-            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/amfi_bypass.dylib",
-                "Media/Recordings/.haxx/var/aquila/amfi_bypass_4_5.dylib",
+            if (backup_add_file_from_path(backup, "MediaDomain", "payload/aquila/amfi_bypass_4_5.dylib",
+                "Media/Recordings/.haxx/var/aquila/amfi_bypass.dylib",
                 0100755, 0, 0, 4) != 0) {
                 ERROR("Could not add amfi\n");
             }
