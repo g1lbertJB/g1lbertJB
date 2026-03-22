@@ -1171,20 +1171,24 @@ int jailbreak_device(const char *uuid)
     afc_remove_path(afc, "/mount.stdout");
 
     // Now, the lockdown socket is 777
-    WARN("To continue, please run the 'g1lbertJB' icon to remount the root filesystem as read/write.\n");
+    WARN("Please run the 'g1lbertJB' icon to remount the root filesystem as read/write. Press Enter/Return to continue when done.\n");
+    getchar();
+
     done = 0;
-    while (done != 1) {
+    for (int i = 0; i < 5; i++) {
         char** fi = NULL;
+        DEBUG("Waiting for mount.stderr... (%d/5)\n", i + 1);
         if (afc_get_file_info(afc, "/mount.stderr", &fi) == AFC_E_SUCCESS) {
             done = 1;
             free_dictionary(fi);
             break;
         }
-        sleep(2);
+        sleep(1);
     }
 
-    DEBUG("Stage 2: Giving it 5 seconds for root filesystem to remount\n");
-    sleep(5); // idk if this is really needed, but i'll keep it in here anyway
+    if (!done) {
+        DEBUG("Unable to find mount.stderr. Continuing anyway.\n");
+    }
 
     if (build[0] == '1') {
         // ios 6.0-6.1.2 stage 3 setup (2/2)
