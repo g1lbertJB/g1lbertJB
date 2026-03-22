@@ -31,3 +31,4 @@
 - Thanks to Merculous for the help and support on this project
 - Thanks to whoever made unthredera1n, the base of this project
 - Thanks to staturnz for [Aquila](https://github.com/staturnzz/aquila) untether
+- Thanks to the evad3rs for the evasi0n untether used on A6(X) iOS 6.0 to 6.1.2
