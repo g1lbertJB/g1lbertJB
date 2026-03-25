@@ -313,6 +313,7 @@ int verify_product(char *build)
     return 1;
 }
 
+int reinstall_bootstrap = 0;
 int use_aquila = 1;
 int use_aquila_flag = 0;
 
@@ -323,10 +324,12 @@ int main(int argc, char *argv[])
     char *product = NULL;
     char *build = NULL;
 
-    // check for --use-aquila flag
+    // check for flags
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--use-aquila") == 0) {
             use_aquila_flag = 1;
+        } else if (strcmp(argv[i], "--reinstall") == 0) {
+            reinstall_bootstrap = 1;
         }
     }
 
@@ -527,9 +530,9 @@ int jailbreak_device(const char *uuid)
     DEBUG("Device info: %s, %s\n", product, build);
     DEBUG("Beginning jailbreak, this may take a while...\n");
 
-    // start AFC and move dirs out of the way
+    // start AFC2 and check for jailbreak if --reinstall flag is not set
     uint16_t port = 0;
-    if (lockdown_start_service(lockdown, "com.apple.afc2", &port) == 0) {
+    if (lockdown_start_service(lockdown, "com.apple.afc2", &port) == 0 && reinstall_bootstrap == 0) {
         char **fileinfo = NULL;
         uint32_t ffmt = 0;
 
@@ -573,6 +576,7 @@ int jailbreak_device(const char *uuid)
         }
     }
 
+    // start AFC and move dirs out of the way
     if (lockdown_start_service(lockdown, "com.apple.afc", &port) != 0) {
         ERROR("Failed to start AFC service\n", 0);
         lockdown_free(lockdown);
