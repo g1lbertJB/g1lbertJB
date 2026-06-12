@@ -1286,10 +1286,8 @@ int jailbreak_device(const char *uuid)
                 !strcmp(product, "P103AP")) {
                 use_aquila = 0;
             }
-            if (build[0] == '9') {
-                if ((product[0] == 'K' && product[1] == '9') || product[0] == 'J' || !strcmp(product, "N94AP")) {
-                    use_aquila = 0;
-                }
+            if ((product[0] == 'K' && product[1] == '9') || product[0] == 'J' || !strcmp(product, "N94AP")) {
+                use_aquila = 0;
             }
         }
 
