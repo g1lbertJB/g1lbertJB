@@ -1,13 +1,28 @@
 #!/bin/bash
 
-# Compile script tested on: macOS 10.11, Ubuntu 22.04, Windows 10 LTSC 21H2
+# Compile script tested on: macOS 10.11 x86_64, macOS 12.6 arm64, Ubuntu 22.04, Windows 10 LTSC 21H2
 PREFIX=/usr/local
+libplist_ver=2.0.4
+limd_glue_ver=1.0.0
+libusbmuxd_ver=2.0.7
+limd_ver=1.0.6
+libideviceactivation_ver=1.0.2
+libirecovery_ver=1.0.5
 
 limd() {
-    install_name_tool -change $PREFIX/lib/libimobiledevice-1.0.6.dylib @executable_path/lib/libimobiledevice-1.0.6.dylib $1
-    install_name_tool -change $PREFIX/lib/libusbmuxd-2.0.6.dylib @executable_path/lib/libusbmuxd-2.0.6.dylib $1
-    install_name_tool -change $PREFIX/lib/libimobiledevice-glue-1.0.0.dylib @executable_path/lib/libimobiledevice-glue-1.0.0.dylib $1
-    install_name_tool -change $PREFIX/lib/libplist-2.0.4.dylib @executable_path/lib/libplist-2.0.4.dylib $1
+    local file="$1"
+
+    for lib in \
+        "libplist-$libplist_ver.dylib" \
+        "libimobiledevice-glue-$limd_glue_ver.dylib" \
+        "libusbmuxd-$libusbmuxd_ver.dylib" \
+        "libimobiledevice-$limd_ver.dylib"
+    do
+        install_name_tool -change \
+            "$PREFIX/lib/$lib" \
+            "@executable_path/lib/$lib" \
+            "$file"
+    done
 }
 
 mkdir -p output/payload tmp
@@ -18,7 +33,7 @@ if [[ $(uname) == "Darwin" ]]; then
     if [[ ! -d limd ]]; then
         mkdir limd
         pushd limd
-        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/41612817e2df4722d5c9cf34e760442ee48bb024/limd-build-macos.sh
+        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/d73d73de1b786dd1e590a7baac3f2580eb2a0d57/limd-build-macos.sh
         chmod +x limd-build-macos.sh
         ./limd-build-macos.sh
         popd
@@ -40,7 +55,7 @@ if [[ $(uname) == "Darwin" ]]; then
     LIMD_GLUE_CFLAGS="-I$PREFIX/include"
     LIMD_GLUE_LIBS="-L$PREFIX/lib -limobiledevice-glue-1.0"
     LIMD_GLUE_VERSION=`cat $PREFIX/lib/pkgconfig/libimobiledevice-glue-1.0.pc |grep Version: |cut -d " " -f 2`
-    LIBZIP_VERSION=1.7.1
+    LIBZIP_VERSION=1.11.4
     LIBZIP_DIR=libzip
     LIBZIP_CFLAGS="-I$DEPSDIR/$LIBZIP_DIR/lib -I$DEPSDIR/$LIBZIP_DIR/build"
     LIBZIP_LIBS="$DEPSDIR/$LIBZIP_DIR/build/lib/libzip.a -Xlinker $SDKDIR/usr/lib/libbz2.tbd -Xlinker $SDKDIR/usr/lib/liblzma.tbd -lz"
@@ -62,7 +77,11 @@ if [[ $(uname) == "Darwin" ]]; then
     limd src/unthreadedjb
     mkdir -p output/lib
     cp src/unthreadedjb output/gilbertjb
-    cp limd/bin/lib/libimobiledevice-1.0.6.dylib limd/bin/lib/libusbmuxd-2.0.6.dylib limd/bin/lib/libimobiledevice-glue-1.0.0.dylib limd/bin/lib/libplist-2.0.4.dylib output/lib
+    cp  limd/bin/lib/libimobiledevice-$limd_ver.dylib \
+        limd/bin/lib/libusbmuxd-$libusbmuxd_ver.dylib \
+        limd/bin/lib/libimobiledevice-glue-$limd_glue_ver.dylib \
+        limd/bin/lib/libplist-$libplist_ver.dylib \
+        output/lib
     cp gilbertjb.command output/
     echo "Done. output is in output/"
     exit
@@ -77,13 +96,13 @@ elif [[ $OSTYPE == "cygwin" ]]; then
 
     pushd tmp
 
-    git clone https://github.com/libimobiledevice/libplist
-    git clone https://github.com/libimobiledevice/libimobiledevice-glue
-    git clone https://github.com/libimobiledevice/libusbmuxd
-    git clone https://github.com/libimobiledevice/libtatsu
-    git clone https://github.com/libimobiledevice/libimobiledevice
+    git clone --filter=blob:none https://github.com/libimobiledevice/libplist
+    git clone --filter=blob:none https://github.com/libimobiledevice/libimobiledevice-glue
+    git clone --filter=blob:none https://github.com/libimobiledevice/libusbmuxd
+    git clone --filter=blob:none https://github.com/libimobiledevice/libtatsu
+    git clone --filter=blob:none https://github.com/libimobiledevice/libimobiledevice
 
-    gzver="1.13"
+    gzver="1.14"
     curl -LO https://ftp.wayne.edu/gnu/gzip/gzip-$gzver.zip
     echo "Building gzip..."
     unzip -d . gzip-$gzver.zip
@@ -154,14 +173,14 @@ if [[ ! -e $PREFIX/lib/libimobiledevice.a ]]; then
     sudo apt remove -y libssl-dev
     sudo apt install -y pkg-config libtool automake g++ cmake git libusb-1.0-0-dev libreadline-dev libpng-dev libcurl4-openssl-dev git autopoint ca-certificates
 
-    git clone https://github.com/madler/zlib
-    git clone https://github.com/lzfse/lzfse
-    git clone https://github.com/libimobiledevice/libplist
-    git clone https://github.com/libimobiledevice/libimobiledevice-glue
-    git clone https://github.com/libimobiledevice/libusbmuxd
-    git clone https://github.com/libimobiledevice/libtatsu
-    git clone https://github.com/libimobiledevice/libimobiledevice
-    git clone https://github.com/nih-at/libzip
+    git clone --filter=blob:none https://github.com/madler/zlib
+    git clone --filter=blob:none https://github.com/lzfse/lzfse
+    git clone --filter=blob:none https://github.com/libimobiledevice/libplist
+    git clone --filter=blob:none https://github.com/libimobiledevice/libimobiledevice-glue
+    git clone --filter=blob:none https://github.com/libimobiledevice/libusbmuxd
+    git clone --filter=blob:none https://github.com/libimobiledevice/libtatsu
+    git clone --filter=blob:none https://github.com/libimobiledevice/libimobiledevice
+    git clone --filter=blob:none https://github.com/nih-at/libzip
     curl -LO https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
 
     cd zlib
@@ -231,6 +250,7 @@ if [[ ! -e $PREFIX/lib/libimobiledevice.a ]]; then
     cd ..
 
     cd libzip
+    git checkout v1.11.4
     sed -i 's/\"Build shared libraries\" ON/\"Build shared libraries\" OFF/g' CMakeLists.txt
     cmake $CC_ARGS .
     make $JNUM
@@ -249,7 +269,7 @@ if [[ ! -s output/usbmuxd ]]; then
     if [[ $(uname -m) == "a"* && $(getconf LONG_BIT) == 64 ]]; then
         platform_arch="arm64"
     fi
-    curl -L https://github.com/LukeZGD/Legacy-iOS-Kit/raw/refs/heads/main/bin/linux/$platform_arch/usbmuxd -o output/usbmuxd
+    cp bin/linux/$platform_arch/usbmuxd -o output/usbmuxd
 fi
 chmod +x output/usbmuxd
 echo "Done. output is in output/"
