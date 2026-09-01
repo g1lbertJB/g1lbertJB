@@ -14,12 +14,12 @@ jobs:
     runs-on: ${{ matrix.arch.runner }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Run compile script
         run: ./compile.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: g1lbertJB-linux-${{ matrix.arch.name }}
           path: output/
@@ -30,7 +30,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - uses: msys2/setup-msys2@v2
         with:
@@ -40,7 +40,7 @@ jobs:
       - name: Run compile script
         run: ./compile.sh
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: g1lbertJB-windows-x86_64
           path: output/
