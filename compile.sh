@@ -33,14 +33,14 @@ if [[ $(uname) == "Darwin" ]]; then
     if [[ ! -d limd ]]; then
         mkdir limd
         pushd limd
-        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/30f1990ff28a3ccf78ec712019b1e107cd9300e5/limd-build-macos.sh
+        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/a1661b90af96566a8cd5fb80afb15a5faa46a456/limd-build-macos.sh
         chmod +x limd-build-macos.sh
         ./limd-build-macos.sh
         popd
     fi
 
     LIBRESSL_VER=2.2.7
-    DEPSDIR=$PREFIX
+    DEPSDIR=$(pwd)/limd/deps
     LIBSSL=$DEPSDIR/lib/libssl.35.tbd
     LIBCRYPTO=$DEPSDIR/lib/libcrypto.35.tbd
     SDKDIR=`xcrun --sdk macosx --show-sdk-path 2>/dev/null`
@@ -56,13 +56,9 @@ if [[ $(uname) == "Darwin" ]]; then
     LIMD_GLUE_LIBS="-L$PREFIX/lib -limobiledevice-glue-1.0"
     LIMD_GLUE_VERSION=`cat $PREFIX/lib/pkgconfig/libimobiledevice-glue-1.0.pc |grep Version: |cut -d " " -f 2`
     LIBZIP_VERSION=1.11.4
-    LIBZIP_DIR=libzip
+    LIBZIP_DIR=libzip-$LIBZIP_VERSION
     LIBZIP_CFLAGS="-I$DEPSDIR/$LIBZIP_DIR/lib -I$DEPSDIR/$LIBZIP_DIR/build"
     LIBZIP_LIBS="$DEPSDIR/$LIBZIP_DIR/build/lib/libzip.a -Xlinker $SDKDIR/usr/lib/libbz2.tbd -Xlinker $SDKDIR/usr/lib/liblzma.tbd -lz"
-
-    if [[ ! -e $PREFIX/libressl-$LIBRESSL_VER || ! -e $PREFIX/libzip ]]; then
-        sudo cp -R limd/deps/libressl-$LIBRESSL_VER limd/deps/libzip limd/deps/bin limd/deps/lib limd/deps/include $PREFIX
-    fi
 
     ./autogen.sh \
       openssl_CFLAGS="-I$DEPSDIR/libressl-$LIBRESSL_VER/include" openssl_LIBS="-Xlinker $LIBSSL -Xlinker $LIBCRYPTO" openssl_VERSION="$LIBRESSL_VER" \
@@ -180,6 +176,7 @@ if [[ ! -e $PREFIX/lib/libimobiledevice.a ]]; then
     git clone --filter=blob:none https://github.com/libimobiledevice/libusbmuxd
     git clone --filter=blob:none https://github.com/libimobiledevice/libtatsu
     git clone --filter=blob:none https://github.com/libimobiledevice/libimobiledevice
+    git clone --filter=blob:none https://github.com/libimobiledevice/usbmuxd
     git clone --filter=blob:none https://github.com/nih-at/libzip
     curl -LO https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
 
@@ -256,6 +253,12 @@ if [[ ! -e $PREFIX/lib/libimobiledevice.a ]]; then
     make $JNUM
     make $JNUM install
     cd ..
+
+    echo "Building usbmuxd..."
+    cd usbmuxd
+    ./autogen.sh --without-preflight --without-systemd
+    make $JNUM install LDFLAGS="$BEGIN_LDFLAGS"
+    cd ..
 fi
 
 ./autogen.sh
@@ -265,11 +268,7 @@ make LIBS="-ldl"
 cp src/unthreadedjb output/gilbertjb
 cp gilbertjb.command output/
 if [[ ! -s output/usbmuxd ]]; then
-    platform_arch="$(uname -m)"
-    if [[ $(uname -m) == "a"* && $(getconf LONG_BIT) == 64 ]]; then
-        platform_arch="arm64"
-    fi
-    cp bin/linux/$platform_arch/usbmuxd -o output/usbmuxd
+    cp /usr/local/sbin/usbmuxd output/
 fi
 chmod +x output/usbmuxd
 echo "Done. output is in output/"
