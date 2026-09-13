@@ -36,36 +36,11 @@ fi
 echo "PREFIX: $PREFIX"
 
 if [[ $(uname) == "Darwin" ]]; then
-    TESTCOMMANDS="xcrun clang"
-    for TESTCMD in ${TESTCOMMANDS}; do
-        if ! test -x "`which $TESTCMD`"; then
-            echo "FATAL: Xcode with command line tools is required. Please install and run again."
-            exit 1
-        fi
-    done
-
-    if test -z "$CFLAGS"; then
-        SDKDIR=`xcrun --sdk macosx --show-sdk-path 2>/dev/null`
-        TESTARCHS="arm64 x86_64"
-        USEARCHS=
-        for ARCH in $TESTARCHS; do
-            if echo "int main(int argc, char **argv) { return 0; }" |clang -arch $ARCH -o /dev/null -isysroot $SDKDIR -x c - 2>/dev/null; then
-                USEARCHS="$USEARCHS -arch $ARCH"
-            fi
-        done
-        export CFLAGS="$USEARCHS -isysroot $SDKDIR"
-    else
-        echo -e "${YELLOW}NOTE: Using externally defined CFLAGS. If that's not what you want, run: unset CFLAGS${NORMAL}"
-        if test -z "$SDKDIR"; then
-            SDKDIR=`xcrun --sdk macosx --show-sdk-path 2>/dev/null`
-            echo -e "${YELLOW}NOTE: SDKDIR is not defined, using ${WHITE}$SDKDIR${NORMAL}"
-        fi
-    fi
-
+    export MACOSX_DEPLOYMENT_TARGET=10.11
     if [[ ! -d limd ]]; then
         mkdir limd
         pushd limd
-        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/f17afe53b1e0edb12e56939bf597229e9d22bd2f/limd-build-macos.sh
+        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/7bc22220a24d2f7dee087119cae31cea303bf793/limd-build-macos.sh
         chmod +x limd-build-macos.sh
         ./limd-build-macos.sh
         popd
