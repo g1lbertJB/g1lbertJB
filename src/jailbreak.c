@@ -314,7 +314,7 @@ int verify_product(char *build)
 }
 
 int reinstall_bootstrap = 0;
-int use_aquila = 1;
+int use_aquila = 0;
 int use_aquila_flag = 0;
 
 int main(int argc, char *argv[])
@@ -328,8 +328,10 @@ int main(int argc, char *argv[])
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--use-aquila") == 0) {
             use_aquila_flag = 1;
+            DEBUG("use-aquila flag detected, aquila untether will be used instead of g1lbertJB/evasi0n6\n");
         } else if (strcmp(argv[i], "--reinstall") == 0) {
             reinstall_bootstrap = 1;
+            DEBUG("reinstall flag detected, skipping jailbreak check\n");
         }
     }
 
@@ -1278,17 +1280,8 @@ int jailbreak_device(const char *uuid)
             ERROR("Could not add openssh deb\n");
         }
 
-        if (use_aquila_flag == 0) {
-            if (!strcmp(product, "N41AP") ||
-                !strcmp(product, "N42AP") ||
-                !strcmp(product, "P101AP") ||
-                !strcmp(product, "P102AP") ||
-                !strcmp(product, "P103AP")) {
-                use_aquila = 0;
-            }
-            if ((product[0] == 'K' && product[1] == '9') || product[0] == 'J' || !strcmp(product, "N94AP")) {
-                use_aquila = 0;
-            }
+        if (use_aquila_flag == 1) {
+            use_aquila = 1;
         }
 
         if (use_aquila == 1) {
