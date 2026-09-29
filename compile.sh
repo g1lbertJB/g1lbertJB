@@ -40,7 +40,7 @@ if [[ $(uname) == "Darwin" ]]; then
     if [[ ! -d limd ]]; then
         mkdir limd
         pushd limd
-        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/7bc22220a24d2f7dee087119cae31cea303bf793/limd-build-macos.sh
+        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/6909583d3e245e7ca155b79f764cd2c6945f42a9/limd-build-macos.sh
         chmod +x limd-build-macos.sh
         ./limd-build-macos.sh
         popd
