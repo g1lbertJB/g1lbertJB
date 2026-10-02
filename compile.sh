@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Compile script tested on: macOS 10.11 x86_64, macOS 12.6 arm64, Ubuntu 22.04, Windows 10 LTSC 21H2
-libplist_ver=2.0.4
+libplist_ver=2.0.12
 limd_glue_ver=1.0.0
 libusbmuxd_ver=2.0.7
 limd_ver=1.0.6
@@ -40,7 +40,7 @@ if [[ $(uname) == "Darwin" ]]; then
     if [[ ! -d limd ]]; then
         mkdir limd
         pushd limd
-        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/6909583d3e245e7ca155b79f764cd2c6945f42a9/limd-build-macos.sh
+        curl -LO https://gist.github.com/LukeZGD/0f5ba45494912c419f59bd8178ab57bd/raw/a1dbdd903910dcc0af2b5a54a918f82483536aa3/limd-build-macos.sh
         chmod +x limd-build-macos.sh
         ./limd-build-macos.sh
         popd
